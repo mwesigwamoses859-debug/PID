@@ -1,0 +1,44 @@
+[
+  {
+    "id": "kcca",
+    "name": "Kampala Capital City Authority (KCCA)",
+    "category": "Local Government Authority",
+    "description": "Collaborates on sports structures, community welfare, and urban slum empowerment programs.",
+    "logoUrl": "https://upload.wikimedia.org/wikipedia/en/2/23/Kampala_Capital_City_Authority_Logo.png"
+  },
+  {
+    "id": "mglsd",
+    "name": "Uganda Ministry of Gender, Labour and Social Development",
+    "category": "National Government Ministry",
+    "description": "Provides youth development standards, community empowerment oversight, and operational alignments.",
+    "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Coat_of_arms_of_Uganda.svg"
+  },
+  {
+    "id": "ngo_bureau",
+    "name": "Uganda NGO Bureau",
+    "category": "Regulatory Body",
+    "description": "Oversight organ ensuring complete policy compliance, transparent reporting, and strict standards of accountability.",
+    "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Coat_of_arms_of_Uganda.svg"
+  },
+  {
+    "id": "butebo",
+    "name": "Butebo District Local Government",
+    "category": "Local District Authority",
+    "description": "Integrates local resources, facilitates community outreach, and hosts local sports-for-development clinics.",
+    "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Coat_of_arms_of_Uganda.svg"
+  },
+  {
+    "id": "usdp",
+    "name": "Uganda Sports for Development Partnership",
+    "category": "Development Alliance",
+    "description": "Unites agencies utilizing athletic engagement as a vehicle for sustainable, pro-youth local policies.",
+    "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Sport_ball_isometric_icon.svg/512px-Sport_ball_isometric_icon.svg.png"
+  },
+  {
+    "id": "korfball",
+    "name": "Uganda Korfball Association",
+    "category": "National Athletic Association",
+    "description": "Promotes gender equality in sport through co-ed korfball training, leagues, and skill development.",
+    "logoUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Korfbal_pictogram.svg/512px-Korfbal_pictogram.svg.png"
+  }
+]
