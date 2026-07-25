@@ -205,9 +205,6 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
 
             {/* Mobile Hamburger Button */}
             <div className="lg:hidden flex items-center space-x-2">
-              <span className="sm:hidden text-[9px] bg-slate-100 text-slate-600 px-2 py-1 rounded font-medium">
-                PID UGANDA
-              </span>
               <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="p-2 rounded-lg text-natural-text hover:text-natural-dark hover:bg-natural-beige/40 focus:outline-none"

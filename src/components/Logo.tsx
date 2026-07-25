@@ -34,6 +34,8 @@ export const Logo: React.FC<LogoProps> = ({
   logoUrl = logoUrl || '/branding/pid-logo.webp';
 
   const [imgError, setImgError] = useState(false);
+  const useCompactOfficialBrand =
+    showText && logoUrl.includes('/branding/pid-logo.webp');
 
   useEffect(() => {
     setImgError(false);
@@ -42,16 +44,37 @@ export const Logo: React.FC<LogoProps> = ({
   if (logoUrl && !imgError) {
     return (
       <div
-        className={`inline-flex items-center rounded-xl bg-white px-1.5 py-1 shadow-sm ring-1 ring-slate-200/70 ${className}`}
+        className={`inline-flex shrink-0 items-center rounded-xl bg-white px-1.5 py-1 shadow-sm ring-1 ring-slate-200/70 ${className}`}
         aria-label="Plan Integral Development"
       >
         <img 
-          src={logoUrl} 
+          src={useCompactOfficialBrand ? '/branding/pid-mark.webp' : logoUrl} 
           alt="Plan Integral Development logo" 
-          style={{ height: `${size}px`, width: 'auto', maxWidth: `${Math.round(size * 1.45)}px` }}
+          style={{
+            height: `${size}px`,
+            width: 'auto',
+            maxWidth: useCompactOfficialBrand ? `${size}px` : `${Math.round(size * 1.45)}px`,
+          }}
           className="object-contain shrink-0"
           onError={() => setImgError(true)}
         />
+        {useCompactOfficialBrand && (
+          <div className="flex shrink-0 flex-col text-left pr-1.5">
+            <span
+              className="text-[clamp(0.95rem,2.5vw,1.2rem)] font-extrabold tracking-tight leading-none text-[#003b71] whitespace-nowrap"
+              style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}
+            >
+              Plan Integral
+            </span>
+            <div className="flex items-center gap-1 mt-1">
+              <div className="h-px w-2.5 bg-[#003b71]/40" />
+              <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-[0.16em] leading-none text-[#003b71]">
+                Development
+              </span>
+              <div className="h-px w-2.5 bg-[#003b71]/40" />
+            </div>
+          </div>
+        )}
       </div>
     );
   }
