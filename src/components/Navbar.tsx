@@ -98,7 +98,7 @@ export default function Navbar({ activeSection, setActiveSection }: NavbarProps)
               onClick={() => scrollToSection('home')}
               className="flex items-center cursor-pointer group"
             >
-              <Logo size={42} lightMode={true} />
+              <Logo size={54} lightMode={true} />
             </div>
 
             {/* Desktop Navigation */}

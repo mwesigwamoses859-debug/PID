@@ -88,6 +88,7 @@ export interface FullSiteSchema {
   siteSettings: {
     siteTitle: string;
     siteTagline: string;
+    siteLogoUrl?: string;
     announcementText: string;
     theme: 'olive' | 'noir' | 'blue' | 'earth';
     fontSizePercent: number;
@@ -285,7 +286,7 @@ const DEFAULT_CONTENT: WebContent = {
   reduceMotion: DEFAULT_FULL_SCHEMA.siteSettings.reduceMotion ?? false,
   siteTitle: DEFAULT_FULL_SCHEMA.siteSettings.siteTitle,
   siteTagline: DEFAULT_FULL_SCHEMA.siteSettings.siteTagline,
-  siteLogoUrl: (DEFAULT_FULL_SCHEMA.siteSettings as any).siteLogoUrl || '',
+  siteLogoUrl: DEFAULT_FULL_SCHEMA.siteSettings.siteLogoUrl || '/branding/pid-logo.webp',
   announcementText: DEFAULT_FULL_SCHEMA.siteSettings.announcementText,
 
   heroTitle1: DEFAULT_FULL_SCHEMA.pageHero.heroTitle1,
@@ -479,6 +480,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setContent({
           ...DEFAULT_CONTENT,
           ...parsed,
+          siteLogoUrl: parsed.siteLogoUrl || DEFAULT_CONTENT.siteLogoUrl,
           galleryImages: parsed.galleryImages || DEFAULT_CONTENT.galleryImages,
           services: parsed.services || DEFAULT_CONTENT.services,
           packages: parsed.packages || DEFAULT_CONTENT.packages,
@@ -583,6 +585,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       siteSettings: {
         siteTitle: content.siteTitle,
         siteTagline: content.siteTagline,
+        siteLogoUrl: content.siteLogoUrl,
         announcementText: content.announcementText,
         theme: content.theme,
         fontSizePercent: content.fontSizePercent,
@@ -663,6 +666,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           reduceMotion: parsed.siteSettings.reduceMotion ?? content.reduceMotion ?? false,
           siteTitle: parsed.siteSettings.siteTitle || content.siteTitle,
           siteTagline: parsed.siteSettings.siteTagline || content.siteTagline,
+          siteLogoUrl: parsed.siteSettings.siteLogoUrl || content.siteLogoUrl || '/branding/pid-logo.webp',
           announcementText: parsed.siteSettings.announcementText || content.announcementText,
 
           heroTitle1: parsed.pageHero?.heroTitle1 || content.heroTitle1,

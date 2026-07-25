@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAdmin } from '../context/AdminContext';
 
 interface LogoProps {
@@ -31,36 +31,27 @@ export const Logo: React.FC<LogoProps> = ({
     // optional fallback if rendered outside AdminProvider
   }
 
+  logoUrl = logoUrl || '/branding/pid-logo.webp';
+
   const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [logoUrl]);
 
   if (logoUrl && !imgError) {
     return (
-      <div className={`flex items-center gap-2.5 ${className}`}>
+      <div
+        className={`inline-flex items-center rounded-xl bg-white px-1.5 py-1 shadow-sm ring-1 ring-slate-200/70 ${className}`}
+        aria-label="Plan Integral Development"
+      >
         <img 
           src={logoUrl} 
-          alt="Plan Integral Development" 
-          style={{ height: `${size}px`, maxWidth: '180px' }}
+          alt="Plan Integral Development logo" 
+          style={{ height: `${size}px`, width: 'auto', maxWidth: `${Math.round(size * 1.45)}px` }}
           className="object-contain shrink-0"
           onError={() => setImgError(true)}
         />
-        {showText && (
-          <div className="flex flex-col text-left">
-            <span className={`text-xl font-extrabold tracking-tight leading-none ${
-              lightMode ? "text-[#002B66]" : "text-white"
-            }`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
-              Plan Integral
-            </span>
-            <div className="flex items-center gap-1.5 mt-1">
-              <div className={`h-[1px] w-3 ${lightMode ? "bg-[#002B66]/40" : "bg-white/40"}`} />
-              <span className={`text-[9px] font-bold uppercase tracking-[0.22em] leading-none ${
-                lightMode ? "text-[#002B66]" : "text-white/90"
-              }`}>
-                Development
-              </span>
-              <div className={`h-[1px] w-3 ${lightMode ? "bg-[#002B66]/40" : "bg-white/40"}`} />
-            </div>
-          </div>
-        )}
       </div>
     );
   }

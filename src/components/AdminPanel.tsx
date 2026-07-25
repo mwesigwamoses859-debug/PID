@@ -6,6 +6,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAdmin, ServiceItem, PackageItem, BlogPostItem, TestimonialItem, AdministratorUser, GalleryImage } from '../context/AdminContext';
+import { Logo } from './Logo';
 import { 
   X, Lock, ShieldAlert, Sliders, Type, Image, RefreshCw, 
   Plus, Trash2, CheckCircle2, LogOut, Link as LinkIcon,
@@ -616,8 +617,8 @@ export const AdminPanel: React.FC = () => {
         {/* DECAP CMS BRANDED TOP NAVIGATION BAR */}
         <div className="flex justify-between items-center bg-[#003366] text-white px-3 sm:px-4 py-3 border-b border-[#002244] shrink-0 shadow-md">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-[#7DC242] text-slate-950 flex items-center justify-center font-black text-base shadow-md shrink-0">
-              D
+            <div className="w-9 h-9 rounded-lg bg-white p-1 flex items-center justify-center shadow-md shrink-0">
+              <img src="/branding/pid-mark.webp" alt="" className="w-full h-full object-contain" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-2">
@@ -715,10 +716,8 @@ export const AdminPanel: React.FC = () => {
                   
                   {/* Decap Logo Header */}
                   <div className="text-center space-y-3">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00c7b7] to-[#7DC242] p-0.5 mx-auto shadow-xl">
-                      <div className="w-full h-full bg-[#131b26] rounded-[14px] flex items-center justify-center text-[#00c7b7] font-black text-2xl">
-                        D
-                      </div>
+                    <div className="inline-flex rounded-2xl bg-white p-2 mx-auto shadow-xl ring-1 ring-slate-200">
+                      <Logo size={76} showText={false} lightMode={true} className="shadow-none ring-0 p-0" />
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-white tracking-tight">

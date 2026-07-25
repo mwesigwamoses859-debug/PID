@@ -57,7 +57,7 @@ export default function Footer({ setActiveSection }: FooterProps) {
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border-b border-white/15 pb-10 mb-12">
           <div className="space-y-2">
             <div className="cursor-pointer inline-block" onClick={() => handleScrollTo('home')}>
-              <Logo size={44} lightMode={false} />
+              <Logo size={82} lightMode={false} />
             </div>
             <p className="text-xs text-slate-200 max-w-lg leading-relaxed font-medium">
               {content.footerSettings?.description}

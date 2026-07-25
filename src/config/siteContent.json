@@ -2,6 +2,7 @@
   "siteSettings": {
     "siteTitle": "Partnership for Integrated Development Uganda (PID)",
     "siteTagline": "Empowering Grassroots Communities Through Sport, Health & Sustainable Livelihoods",
+    "siteLogoUrl": "/branding/pid-logo.webp",
     "announcementText": "Official Registered NGO Reg No: INDR177427311NB | Kitintale, Kampala",
     "theme": "olive",
     "fontSizePercent": 100,
@@ -16,7 +17,7 @@
     "metaTitle": "PID Uganda | Community Empowerment & Grassroots Sports NGO",
     "metaDescription": "PID Uganda is an indigenous non-governmental organization empowering children, youth, and women through sports, primary healthcare, digital skills, and climate action.",
     "keywords": "PID Uganda, NGO Kampala, Kitintale youth sports, Uganda grassroots development, community health, climate action",
-    "ogImage": "/images/mtn-sos-148.jpg"
+    "ogImage": "/branding/pid-logo.webp"
   },
   "pageHero": {
     "heroTitle1": "Empowering Grassroots Communities in Uganda Through",
