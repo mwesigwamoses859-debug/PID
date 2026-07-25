@@ -1,6 +1,6 @@
 {
-  "name": "Plan Integral Development",
-  "description": "The official website for Plan Integral Development (PID) Uganda, promoting sport, empowerment, and social impact.",
+  "name": "Plan Integral Development Uganda",
+  "description": "Sport. Empowerment. Impact. Transforming lives through the power of sport.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

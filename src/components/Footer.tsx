@@ -1,156 +1,198 @@
-import { Mail, Phone, MapPin, ArrowUpRight, Download, Heart } from 'lucide-react';
-import Logo from './Logo';
-import { translations, Language } from '../translations';
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { useState, FormEvent } from 'react';
+import { motion } from 'motion/react';
+import { Award, MapPin, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { useAdmin } from '../context/AdminContext';
+import { Logo } from './Logo';
 
 interface FooterProps {
-  currentPage: 'home' | 'about' | 'programmes' | 'governance' | 'get-involved' | 'contact';
-  onNavigate: (page: 'home' | 'about' | 'programmes' | 'governance' | 'get-involved' | 'contact') => void;
-  language: Language;
-  onOpenDonation?: () => void;
+  setActiveSection: (section: string) => void;
 }
 
-export default function Footer({ currentPage, onNavigate, language, onOpenDonation }: FooterProps) {
+export default function Footer({ setActiveSection }: FooterProps) {
+  const { setIsAdminOpen, content } = useAdmin();
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+  const footerBackground =
+    content.footerSettings?.backgroundImage ||
+    '/images/mtn-sos-151.jpg';
+
+  const handleSubscribe = (e: FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    setSubscribed(true);
+    setTimeout(() => {
+      setEmail('');
+    }, 2500);
+  };
+
   const currentYear = new Date().getFullYear();
-  const t = translations[language];
+
+  const handleScrollTo = (id: string) => {
+    setActiveSection(id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-    <footer className="bg-brand-950 text-white border-t border-brand-900 relative overflow-hidden">
-      {/* Subtle organic decorative background pattern */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay bg-[radial-gradient(#F2C94C_1.5px,transparent_1.5px)] [background-size:24px_24px]"></div>
+    <footer className="relative bg-[#003366] text-white pt-16 pb-12 border-t border-[#004b93] font-sans overflow-hidden">
+      
+      {/* BACKGROUND IMAGE LAYER WITH HIGH-CONTRAST DARK NAVY OVERLAY */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src={footerBackground}
+          alt="Plan Integral Development Uganda" 
+          className="w-full h-full object-cover object-[center_38%] opacity-55 filter brightness-75 contrast-110"
+        />
+        {/* Navy overlay preserves the photograph while keeping all footer copy readable. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#003366]/78 via-[#002852]/86 to-[#001326]/96" />
+      </div>
 
-      {/* Top Footer Section */}
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-14 md:py-16 grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Brand Column (4 Cols) */}
-        <div className="md:col-span-4 space-y-4">
-          <button 
-            onClick={() => {
-              onNavigate('home');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }} 
-            className="flex items-center group text-left cursor-pointer"
-          >
-            <Logo variant="white" className="h-10 sm:h-11" showText={true} />
-          </button>
-          <p className="text-xs text-slate-300 leading-relaxed max-w-sm">
-            {language === 'en'
-              ? 'Working alongside communities for a thriving, resilient Uganda. We partner with people to advance learning, wellbeing, livelihoods and environmental resilience.'
-              : 'Tukolera wamu n\'abantu okusobola okutumbula Uganda erimu amaanyi era n\'enkulaakulana. Tukolera wamu n\'abantu ku by\'enjigiriza, embeera, emirimu n\'obutonde.'}
-          </p>
+        {/* TOP BRAND & CTA HEADER BAR */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border-b border-white/15 pb-10 mb-12">
+          <div className="space-y-2">
+            <div className="cursor-pointer inline-block" onClick={() => handleScrollTo('home')}>
+              <Logo size={44} lightMode={false} />
+            </div>
+            <p className="text-xs text-slate-200 max-w-lg leading-relaxed font-medium">
+              {content.footerSettings?.description}
+            </p>
+          </div>
+
+          {/* Support Our Mission CTA Card */}
+          <div className="bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto shadow-lg">
+            <div className="text-left">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#7DC242] block">
+                Make An Impact Today
+              </span>
+              <h4 className="text-sm font-bold text-white font-serif italic">
+                Support Our Mission
+              </h4>
+            </div>
+            <button
+              onClick={() => handleScrollTo('opportunities')}
+              className="w-full sm:w-auto px-5 py-2.5 bg-[#7DC242] hover:bg-[#6eb335] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer border border-emerald-300/40 shrink-0"
+            >
+              <span>Donate & Partner</span>
+              <ArrowRight className="w-4 h-4 text-slate-950" />
+            </button>
+          </div>
         </div>
 
-        {/* Explore Links Column (3 Cols) */}
-        <div className="md:col-span-2.5 space-y-4 md:pl-4">
-          <h4 className="text-[11px] font-mono font-bold text-gold-500 uppercase tracking-widest">
-            {language === 'en' ? 'Explore' : 'Sunsula'}
-          </h4>
-          <div className="text-xs text-slate-300 flex flex-col space-y-2.5 items-start">
-            <button 
-              onClick={() => onNavigate('about')} 
-              className="hover:text-gold-500 transition-colors text-left cursor-pointer"
-            >
-              {t.navAbout}
-            </button>
-            <button 
-              onClick={() => onNavigate('programmes')} 
-              className="hover:text-gold-500 transition-colors text-left cursor-pointer"
-            >
-              {t.navProgrammes}
-            </button>
-            <button 
-              onClick={() => onNavigate('home')} 
-              className="hover:text-gold-500 transition-colors text-left cursor-pointer"
-            >
-              {language === 'en' ? 'Projects & impact' : 'Emirimu gyaffe'}
-            </button>
-            <button 
-              onClick={() => onNavigate('governance')} 
-              className="hover:text-gold-500 transition-colors text-left cursor-pointer"
-            >
-              {t.navGovernance}
-            </button>
-            <button 
-              onClick={() => onNavigate('about')} 
-              className="hover:text-gold-500 transition-colors text-left cursor-pointer"
-            >
-              {language === 'en' ? 'Photo gallery' : 'Ebifananyi'}
-            </button>
-            {onOpenDonation && (
-              <button 
-                onClick={onOpenDonation} 
-                className="text-gold-400 hover:text-gold-300 font-semibold transition-colors text-left cursor-pointer flex items-center space-x-1"
+        {/* MAIN NAVIGATION & CONTENT GRID */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 border-b border-white/15 pb-12 mb-10">
+          
+          {/* Column 1: Organization Credentials & Contact (col-span-4) */}
+          <div className="lg:col-span-4 space-y-4 bg-[#001d38]/55 backdrop-blur-[2px] rounded-2xl p-5 border border-white/10">
+            <h4 className="text-xs font-black uppercase tracking-widest text-[#7DC242] border-b border-white/10 pb-2">
+              Plan Integral Development
+            </h4>
+            
+            <div className="text-xs text-slate-200 space-y-2 bg-[#002244]/60 backdrop-blur-sm p-4 rounded-xl border border-white/10 shadow-sm">
+              <p className="font-extrabold text-[#7DC242] text-[11px] tracking-wider uppercase flex items-center gap-1.5">
+                <Award className="w-4 h-4 text-[#7DC242]" />
+                NGO Registration Details
+              </p>
+              <p className="font-semibold text-white">License: INDR177427311NB</p>
+              <p className="text-slate-300 text-[11px] leading-relaxed">
+                Registered under CAP 109 Act of Uganda. Non-Political & Non-Religious Non-Governmental Organization.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs text-slate-200 font-medium pt-1">
+              <MapPin className="w-4 h-4 text-[#7DC242] shrink-0" />
+              <span>Headquarters: Kitintale, Nakawa Division, Kampala, Uganda</span>
+            </div>
+          </div>
+
+          {/* Column 2: Navigation Links (col-span-4) */}
+          <div className="lg:col-span-4 space-y-4 bg-[#001d38]/55 backdrop-blur-[2px] rounded-2xl p-5 border border-white/10">
+            <h4 className="text-xs font-black uppercase tracking-widest text-[#7DC242] border-b border-white/10 pb-2">
+              {content.footerSettings?.exploreTitle || 'Explore Website'}
+            </h4>
+            
+            <div className="grid grid-cols-2 gap-2 text-xs font-bold">
+              {(content.navigationItems || []).filter((link) => link.visible).map((link) => (
+                <button
+                  key={link.id}
+                  onClick={() => handleScrollTo(link.id)}
+                  className="text-left py-1.5 px-2.5 rounded-lg text-slate-200 hover:text-white hover:bg-white/10 transition-all cursor-pointer flex items-center gap-1.5 font-semibold"
+                >
+                  <span className="text-[#7DC242]">•</span>
+                  <span>{link.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Column 3: Newsletter & Console (col-span-4) */}
+          <div className="lg:col-span-4 space-y-4 bg-[#001d38]/55 backdrop-blur-[2px] rounded-2xl p-5 border border-white/10">
+            <h4 className="text-xs font-black uppercase tracking-widest text-[#7DC242] border-b border-white/10 pb-2">
+              {content.footerSettings?.newsletterTitle || 'Stay Connected & Portal'}
+            </h4>
+            
+            <p className="text-xs text-slate-200 leading-relaxed font-medium">
+              {content.footerSettings?.newsletterText}
+            </p>
+
+            {!subscribed ? (
+              <form onSubmit={handleSubscribe} className="flex gap-2">
+                <input
+                  type="email"
+                  required
+                  placeholder="Enter your email address..."
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1 text-xs bg-[#002244] border border-white/20 rounded-xl px-3.5 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:border-[#7DC242] font-medium"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2.5 bg-[#7DC242] hover:bg-[#6eb335] text-slate-950 font-black rounded-xl text-xs flex items-center justify-center cursor-pointer shadow-md border border-emerald-300/40"
+                >
+                  <ArrowRight className="w-4 h-4 text-slate-950" />
+                </button>
+              </form>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center gap-2 text-xs font-bold text-slate-950 bg-[#7DC242] p-3 rounded-xl shadow-md"
               >
-                <span>❤</span>
-                <span>{language === 'en' ? 'Support Our Mission' : 'Yamba ku Nteekateeka'}</span>
-              </button>
+                <CheckCircle2 className="w-4 h-4 text-slate-950 shrink-0" />
+                <span>Thank you for subscribing!</span>
+              </motion.div>
             )}
           </div>
+
         </div>
 
-        {/* Visit Us Column (3 Cols) */}
-        <div className="md:col-span-2.5 space-y-4">
-          <h4 className="text-[11px] font-mono font-bold text-gold-500 uppercase tracking-widest">Visit us</h4>
-          <address className="text-xs text-slate-300 not-italic space-y-1.5 leading-relaxed">
-            Plot 1420 Ntensibe Road<br />
-            Kitintale, Kampala, Uganda
-          </address>
-          <a 
-            href="https://maps.google.com/?q=Ntensibe+Road+Kitintale+Kampala+Uganda" 
-            target="_blank" 
-            rel="noreferrer"
-            className="inline-flex items-center space-x-1 text-xs text-gold-500 hover:text-gold-400 font-medium transition-colors cursor-pointer"
-          >
-            <span>Get directions</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </a>
-        </div>
-
-        {/* Contact Column (3 Cols) */}
-        <div className="md:col-span-3 space-y-4">
-          <h4 className="text-[11px] font-mono font-bold text-gold-500 uppercase tracking-widest">Contact Joshua</h4>
-          <div className="text-xs text-slate-300 flex flex-col space-y-2.5 items-start">
-            <a 
-              href="https://wa.me/256776526344" 
-              target="_blank" 
-              rel="noreferrer" 
-              className="hover:text-gold-500 transition-colors font-semibold"
-            >
-              WhatsApp: +256 776 526344
-            </a>
-            <a 
-              href="mailto:info@piduganda.org" 
-              className="hover:text-gold-500 transition-colors underline"
-            >
-              info@piduganda.org
-            </a>
+        {/* BOTTOM FOOTER COPYRIGHT & ACCESS */}
+        <div className="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-300 gap-4 font-semibold">
+          <p>© {currentYear} {content.footerSettings?.copyrightText}</p>
+          
+          <div className="flex items-center gap-4">
             <button 
-              onClick={() => onNavigate('contact')} 
-              className="inline-flex items-center space-x-1.5 text-xs text-slate-300 hover:text-gold-500 transition-colors text-left"
+              onClick={() => handleScrollTo('opportunities')}
+              className="hover:text-white text-[#7DC242] transition-colors font-bold"
             >
-              <Download className="w-3.5 h-3.5 text-gold-500" />
-              <span>Download organisation profile</span>
+              Support Our Mission
+            </button>
+            <span className="text-slate-500">•</span>
+            <button 
+              onClick={() => setIsAdminOpen(true)}
+              className="hover:text-white text-slate-300 transition-colors"
+            >
+              Console
             </button>
           </div>
         </div>
 
       </div>
-
-      {/* Bottom Legal bar */}
-      <div className="border-t border-brand-900 bg-brand-950 py-6 px-4 md:px-8 text-center text-slate-400 text-[11px] font-mono relative z-10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-          <div>
-            &copy; {currentYear} Plan Integral Development. All rights reserved.
-          </div>
-          <div className="text-slate-400">
-            Community-led. People-centred. Future-focused.
-          </div>
-          <div className="flex items-center space-x-1 text-[11px]">
-            <span>Representative photography from Pexels</span>
-            <Heart className="w-3.5 h-3.5 text-red-500 fill-red-500" />
-          </div>
-        </div>
-      </div>
-
     </footer>
   );
 }

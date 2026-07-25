@@ -1,51 +1,186 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Lora", Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --color-brand-50: #f0f7f5;
-  --color-brand-100: #d1ebe1;
-  --color-brand-500: #0f594b;
-  --color-brand-600: #0b4c3f;
-  --color-brand-700: #083d32;
-  --color-brand-900: #07201b;
-  --color-brand-950: #08231d; /* Matches rgba(8,35,29,1) */
+  /* Vibrant, Accessible NGO Brand Palette (Youth Sport Uganda & Plan Integral Development) */
+  --color-natural-bg: #FFFFFF;
+  --color-natural-text: #1F2937;
+  --color-natural-dark: #003366;
+  --color-natural-olive: #007BC4;
+  --color-natural-tan: #7DC242;
+  --color-natural-beige: #F8FAFC;
+  --color-natural-border: #E2E8F0;
+  --color-natural-muted: #64748B;
 
-  --color-gold-100: #faf3e0;
-  --color-gold-400: #dcb360;
-  --color-gold-500: #c5a059; /* Exquisite antique/champagne brass gold */
-  --color-gold-600: #a98344;
-  --color-gold-700: #8c6a32;
-
-  --color-accent-500: #10b981;
-  --color-accent-600: #059669;
-}
-
-/* Custom styles for animations and smooth interactive states */
-html {
-  scroll-behavior: smooth;
+  /* Vibrant Brand Colors */
+  --color-brand-blue: #007BC4;
+  --color-brand-navy: #003366;
+  --color-brand-green: #7DC242;
+  --color-brand-orange: #EA580C;
+  --color-brand-amber: #D97706;
+  --color-dark-slate: #1F2937;
 }
 
-body {
-  font-family: var(--font-sans);
-  background-color: #fcfcfc;
-  color: #1e293b;
+/* Fluid Typography & Responsive Scale Defaults */
+@layer base {
+  :root {
+    font-size: 100%;
+    --ui-radius: 22px;
+    --ui-blur: 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-natural-text);
+    background-color: var(--color-natural-bg);
+    line-height: 1.65;
+    /* Fluid body font size scaling between 15px on mobile and 17px on desktop screens */
+    font-size: clamp(0.9375rem, 0.88rem + 0.28vw, 1.0625rem);
+    overflow-x: hidden;
+  }
+
+  /* Responsive Fluid Heading Scales */
+  h1, .text-h1 {
+    font-size: clamp(2rem, 1.4rem + 2.5vw, 3.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+
+  h2, .text-h2 {
+    font-size: clamp(1.65rem, 1.25rem + 1.8vw, 2.75rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  h3, .text-h3 {
+    font-size: clamp(1.3rem, 1.1rem + 1vw, 2.125rem);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+
+  h4, .text-h4 {
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.5rem);
+    line-height: 1.3;
+  }
+
+  p {
+    line-height: 1.65;
+  }
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
 }
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
+
+img,
+video,
+iframe {
+  max-width: 100%;
 }
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+
+button,
+input,
+select,
+textarea {
+  min-width: 0;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+
+@media (max-width: 640px) {
+  .website-shell button,
+  .website-shell a {
+    touch-action: manipulation;
+  }
+
+  .website-shell main {
+    overflow-x: clip;
+  }
+
+  .website-shell section {
+    scroll-margin-top: 5rem;
+  }
 }
+
+/* No-code operating-system inspired interface templates. */
+.website-shell {
+  transition: background-color 240ms ease, color 240ms ease;
+}
+
+html[data-ui-style="macos"] .website-shell nav {
+  background: color-mix(in srgb, white 76%, transparent) !important;
+  -webkit-backdrop-filter: blur(var(--ui-blur)) saturate(165%);
+  backdrop-filter: blur(var(--ui-blur)) saturate(165%);
+  box-shadow: 0 12px 36px rgb(15 23 42 / 10%);
+}
+
+html[data-ui-style="macos"] .website-shell .rounded-xl,
+html[data-ui-style="macos"] .website-shell .rounded-2xl,
+html[data-ui-style="macos"] .website-shell .rounded-3xl {
+  border-radius: var(--ui-radius) !important;
+}
+
+html[data-ui-style="macos"] .website-shell button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[data-ui-style="android16"] .website-shell {
+  background:
+    radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--color-brand-green) 13%, transparent), transparent 32rem),
+    radial-gradient(circle at 95% 15%, color-mix(in srgb, var(--color-brand-blue) 12%, transparent), transparent 38rem),
+    var(--color-natural-bg);
+}
+
+html[data-ui-style="android16"] .website-shell nav {
+  background: color-mix(in srgb, var(--color-natural-bg) 88%, var(--color-brand-blue) 12%) !important;
+  box-shadow: 0 10px 28px rgb(0 51 102 / 10%);
+}
+
+html[data-ui-style="android16"] .website-shell .rounded-lg,
+html[data-ui-style="android16"] .website-shell .rounded-xl,
+html[data-ui-style="android16"] .website-shell .rounded-2xl,
+html[data-ui-style="android16"] .website-shell .rounded-3xl {
+  border-radius: var(--ui-radius) !important;
+}
+
+html[data-ui-style="android16"] .website-shell button {
+  min-height: 42px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[data-ui-style="android16"] .website-shell button:active {
+  transform: scale(0.98);
+}
+
+html[data-ui-style="classic"] .website-shell .rounded-3xl {
+  border-radius: min(var(--ui-radius), 16px) !important;
+}
+
+html[data-reduce-motion="true"] *,
+html[data-reduce-motion="true"] *::before,
+html[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .website-shell *,
+  .website-shell *::before,
+  .website-shell *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+

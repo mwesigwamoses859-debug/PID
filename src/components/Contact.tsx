@@ -1,316 +1,309 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
-import { ORG_INFO } from '../data';
-import { ContactFormInput } from '../types';
-import { 
-  MapPin, 
-  Mail, 
-  Phone, 
-  ShieldCheck, 
-  Send, 
-  CheckCircle, 
-  Building, 
-  BookmarkCheck 
-} from 'lucide-react';
-import { translations, Language } from '../translations';
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
-interface ContactProps {
-  language: Language;
-}
+import { useState, FormEvent } from 'react';
+import { motion } from 'motion/react';
+import { MixedColorText } from './MixedColorText';
+import { useAdmin } from '../context/AdminContext';
+import { MapPin, Phone, Mail, Award, CheckCircle2, Send, Clock } from 'lucide-react';
 
-export default function Contact({ language }: ContactProps) {
-  const [formData, setFormData] = useState<ContactFormInput>({
+export default function Contact() {
+  const { content } = useAdmin();
+  const [form, setForm] = useState({
     name: '',
     email: '',
     subject: '',
-    message: ''
+    message: '',
   });
-  const [errors, setErrors] = useState<Partial<ContactFormInput>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSent, setIsSent] = useState(false);
+  const [success, setSuccess] = useState(false);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setFormData(prev => ({ ...prev, [id]: value }));
-    if (errors[id as keyof ContactFormInput]) {
-      setErrors(prev => ({ ...prev, [id]: '' }));
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: Partial<ContactFormInput> = {};
-    if (!formData.name.trim()) newErrors.name = language === 'en' ? 'Please provide your name' : 'Saba utuweereze erinya lyo';
-    if (!formData.email.trim()) {
-      newErrors.email = language === 'en' ? 'Email address is required' : 'Email address eyetaagibwa';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = language === 'en' ? 'Please provide a valid email format' : 'Saba utuweereze email entuufu';
-    }
-    if (!formData.subject.trim()) newErrors.subject = language === 'en' ? 'Please specify a subject' : 'Wandika omutwe gw\'ebbaluwa';
-    if (!formData.message.trim()) newErrors.message = language === 'en' ? 'Please write a message' : 'Wandika obubaka bwo';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleFormSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!form.name || !form.email || !form.message) return;
 
-    setIsSubmitting(true);
-    // Simulate API pipeline delay
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSent(true);
-    }, 1200);
+    // Save inquiry to localStorage for sandbox completeness
+    const savedInquiries = localStorage.getItem('pid_inquiries') || '[]';
+    try {
+      const parsed = JSON.parse(savedInquiries);
+      const updated = [
+        { id: 'inq-' + Date.now(), ...form, date: new Date().toLocaleString() },
+        ...parsed,
+      ];
+      localStorage.setItem('pid_inquiries', JSON.stringify(updated));
+    } catch (err) {
+      console.error(err);
+    }
+
+    setSuccess(true);
   };
 
-  const resetForm = () => {
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    setErrors({});
-    setIsSent(false);
+  const getMailtoLink = () => {
+    const subject = encodeURIComponent(`PID Inquiry: ${form.subject || 'General Contact'}`);
+    const body = encodeURIComponent(
+      `Hello PID Uganda Team,\n\nMy name is ${form.name}.\n\nMessage:\n${form.message}\n\nEmail: ${form.email}\n\nBest regards,\n${form.name}`
+    );
+    return `mailto:info@piduganda.org?subject=${subject}&body=${body}`;
   };
 
   return (
-    <section className="py-24 bg-slate-50 border-t border-slate-100" id="contact">
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
-        
-        {/* Title Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-gold-600 font-mono text-xs uppercase tracking-widest font-semibold block mb-3">
-            06 &mdash; {language === 'en' ? 'Direct Connections' : 'Tukwatagane Butereevu'}
-          </span>
-          <h3 className="font-display font-bold text-3xl sm:text-4xl text-slate-900 tracking-tight">
-            {language === 'en' ? 'Get in Touch With PID' : 'Tuula Twogere na PID'}
-          </h3>
-          <p className="text-sm text-slate-500 mt-2">
-            {language === 'en' ? 'Have questions about our sports clinics, school support channels, or district hubs? Reach out to our secretariat directly.' : 'Olina ebibuuzo ku mizannyo gyaffe, obuyambi bw\'amasomero oba hubs za disitulikiti? Tukwatireko butereevu.'}
-          </p>
+    <section id="contact" className="bg-white font-sans scroll-mt-12 border-b border-slate-200">
+      {/* Top Banner with Background Photo & Full Color Words */}
+      <div className="relative bg-[#003366] text-white py-20 px-4 overflow-hidden border-b border-sky-900 text-center">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={content.contactHeaderBgImage || "https://images.unsplash.com/photo-1543326301-33f5d50fd90f?auto=format&fit=crop&q=80&w=1600"}
+            alt="Contact Secretariat - PID Uganda"
+            className="w-full h-full object-cover opacity-60 brightness-90"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#003366]/90 via-[#003366]/75 to-[#007BC4]/80" />
         </div>
+        <div className="max-w-4xl mx-auto relative z-10 space-y-4">
+          <h2 className="text-sm font-bold uppercase tracking-[0.3em] text-[#7DC242]">
+            {content.contactTagline || "Get in Touch"}
+          </h2>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight">
+            <MixedColorText text={content.contactTitle || "Connect with Our {Secretariat}"} isDarkBg={true} />
+          </h1>
+          <p className="text-slate-100 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
+            Have questions? Message us or visit our headquarters. We look forward to connecting with you.
+          </p>
+          <div className="w-20 h-1.5 bg-[#7DC242] mx-auto rounded-full" />
+        </div>
+      </div>
 
-        {/* Contact Split Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+        {/* Contact Layout Splits */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-stretch">
           
-          {/* Contact details card (5 cols) */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
-            <div className="bg-[#08231d] text-white rounded-2xl p-6 md:p-8 shadow-lg flex-1 flex flex-col justify-between border border-[#0d4035]">
-              <div className="space-y-6">
-                <div>
-                  <span className="text-[10.5px] font-mono tracking-widest text-gold-400 uppercase font-semibold">Secretariat HQ</span>
-                  <h4 className="font-display font-bold text-xl mt-1 text-white">Plan Integral Development</h4>
-                  <p className="text-xs text-slate-300 mt-1">{language === 'en' ? 'Harnessing the power of sport across Uganda.' : 'Okukozesa amaanyi g\'emizannyo mu Uganda yonna.'}</p>
+          {/* Left Column: Office Details & Custom Map Graphic (col-span-5) */}
+          <div className="lg:col-span-5 flex flex-col justify-between space-y-8">
+            <div className="space-y-6">
+              <h3 className="text-2xl font-bold font-serif text-[#003366] italic">
+                Secretariat Coordinates
+              </h3>
+
+              <div className="space-y-5">
+                {/* Physical Address */}
+                <div className="flex gap-4 items-start">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 shadow-sm">
+                    <MapPin className="w-5 h-5 text-[#007BC4]" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#003366]">Office Location</h4>
+                    <p className="text-xs text-slate-700 mt-1 leading-relaxed font-medium">
+                      {content.contactAddress || "Plot 1420 Ntensibe Road, Kitintale, Kampala, Uganda"}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Info Blocks */}
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3 text-xs">
-                    <MapPin className="w-5 h-5 text-gold-500 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="font-bold text-slate-200">{language === 'en' ? 'Office Location' : 'Ofisi yaffe'}</h5>
-                      <p className="text-slate-300 mt-0.5">{ORG_INFO.address}</p>
-                    </div>
+                {/* Mailing Box */}
+                <div className="flex gap-4 items-start">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 shadow-sm">
+                    <Mail className="w-5 h-5 text-[#007BC4]" />
                   </div>
-
-                  <div className="flex items-start space-x-3 text-xs">
-                    <Building className="w-5 h-5 text-gold-500 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="font-bold text-slate-200">{language === 'en' ? 'Postal Address' : 'Postal Address'}</h5>
-                      <p className="text-slate-300 mt-0.5">{ORG_INFO.poBox}</p>
-                    </div>
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#003366]">Digital & Postal Mailbox</h4>
+                    <p className="text-xs text-slate-700 mt-1 font-medium">
+                      P.O. Box 132061 Kampala, Uganda
+                    </p>
+                    <a href={`mailto:${content.contactEmail || "info@piduganda.org"}`} className="text-xs text-[#007BC4] hover:underline mt-1 inline-block font-bold">
+                      {content.contactEmail || "info@piduganda.org"}
+                    </a>
                   </div>
+                </div>
 
-                  <div className="flex items-start space-x-3 text-xs">
-                    <Mail className="w-5 h-5 text-gold-500 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="font-bold text-slate-200">{language === 'en' ? 'E-mail Correspondence' : 'E-mail Ensi ya wonna'}</h5>
-                      <a href={`mailto:${ORG_INFO.email}`} className="text-gold-400 hover:underline mt-0.5 block font-mono font-bold">
-                        {ORG_INFO.email}
-                      </a>
-                    </div>
+                {/* Phone Hotline */}
+                <div className="flex gap-4 items-start">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 shadow-sm">
+                    <Phone className="w-5 h-5 text-[#007BC4]" />
                   </div>
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#003366]">Inquiry Hotline</h4>
+                    <a href={`tel:${content.contactPhone || "+256 776 526 344"}`} className="text-xs text-slate-700 hover:text-[#007BC4] mt-1 inline-block font-bold">
+                      {content.contactPhone || "+256 776 526 344"}
+                    </a>
+                  </div>
+                </div>
 
-                  <div className="flex items-start space-x-3 text-xs">
-                    <Phone className="w-5 h-5 text-gold-500 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h5 className="font-bold text-slate-200">{language === 'en' ? 'Telephone Lines' : 'Essimu Z\'okusimu'}</h5>
-                      <a href={`tel:${ORG_INFO.phone}`} className="text-gold-400 hover:underline mt-0.5 block font-mono font-bold">
-                        {ORG_INFO.phone}
-                      </a>
-                    </div>
+                {/* Licensing License */}
+                <div className="flex gap-4 items-start">
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200 shadow-sm">
+                    <Award className="w-5 h-5 text-[#007BC4]" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#003366]">Regulatory Accreditation</h4>
+                    <p className="text-[10px] text-[#003366] mt-1 uppercase tracking-widest font-bold">
+                      NGO Registration No: INDR177427311NB
+                    </p>
+                    <p className="text-[10px] text-slate-600 mt-0.5 leading-relaxed font-medium">
+                      Fully registered under the NGO Act, CAP 109 of the Republic of Uganda.
+                    </p>
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* NGO credentials footer info */}
-              <div className="border-t border-[#0e483b] pt-6 mt-8 space-y-2">
-                <div className="flex items-center space-x-2 text-[10.5px] text-slate-300">
-                  <ShieldCheck className="w-4 h-4 text-gold-500" />
-                  <span>NGO Reg No: {ORG_INFO.registrationNo}</span>
+            {/* Custom SVG Location Map Indicator */}
+            <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200 shadow-sm space-y-3 relative overflow-hidden">
+              <div className="flex justify-between items-center border-b border-slate-200 pb-2">
+                <span className="text-[10px] font-bold text-[#003366] uppercase tracking-widest flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-[#007BC4]" />
+                  <span>Office Map Coordinates</span>
+                </span>
+                <span className="text-[9px] bg-[#003366] text-white px-2 py-0.5 rounded font-bold">
+                  KLA • EAT
+                </span>
+              </div>
+
+              {/* Styled Vector Map */}
+              <div className="h-32 bg-slate-100 rounded-xl border border-slate-200 relative flex items-center justify-center overflow-hidden">
+                {/* Simulated Roads Grid */}
+                <div className="absolute inset-0 opacity-20">
+                  <div className="absolute top-1/3 left-0 w-full h-1 bg-slate-400 transform rotate-3" />
+                  <div className="absolute bottom-1/4 left-0 w-full h-1.5 bg-slate-400 transform -rotate-12" />
+                  <div className="absolute left-1/3 top-0 w-2 h-full bg-slate-400 transform rotate-45" />
+                  <div className="absolute right-1/4 top-0 w-1.5 h-full bg-slate-400 transform -rotate-12" />
                 </div>
-                <p className="text-[9.5px] text-slate-400 leading-snug">
-                  {language === 'en' 
-                    ? `Registered under the NGO Act, ${ORG_INFO.actNo} with a national mandate in Uganda.`
-                    : `Etandikiddwa wansi w'etteeka lya NGO Act, ${ORG_INFO.actNo} okukola mu Uganda yonna.`}
-                </p>
+
+                {/* Lake Victoria/Port Bell shoreline curve simulation */}
+                <div className="absolute bottom-0 right-0 w-24 h-24 bg-sky-200/50 rounded-full blur-xl border border-sky-300" />
+
+                {/* Neighborhood Markers */}
+                <div className="absolute top-3 left-4 text-[9px] text-slate-500 uppercase font-bold tracking-widest font-mono">
+                  To Mutungo
+                </div>
+                <div className="absolute bottom-3 left-6 text-[9px] text-slate-500 uppercase font-bold tracking-widest font-mono">
+                  To Port Bell Rd
+                </div>
+                <div className="absolute top-12 right-6 text-[9px] text-slate-500 uppercase font-bold tracking-widest font-mono">
+                  Kitintale Market
+                </div>
+
+                {/* Main Road Route Labels */}
+                <div className="absolute top-[40%] left-10 text-[8px] text-slate-700 font-bold bg-white/80 border border-slate-200 px-1.5 py-0.5 rounded-sm uppercase tracking-widest">
+                  Ntensibe Rd
+                </div>
+
+                {/* Target Pin Marker */}
+                <motion.div
+                  animate={{ scale: [1, 1.15, 1] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                  className="relative z-10 flex flex-col items-center"
+                >
+                  <MapPin className="w-8 h-8 text-[#007BC4] fill-sky-200" />
+                  <div className="absolute -bottom-1 w-2 h-2 rounded-full bg-[#007BC4] animate-ping" />
+                </motion.div>
+
+                {/* Pin Tooltip */}
+                <div className="absolute bottom-2.5 right-2 bg-[#003366] text-white text-[10px] p-1.5 rounded-lg shadow-md">
+                  <p className="font-bold">PID SECRETARIAT</p>
+                  <p className="text-[8px] text-slate-200">Plot 1420 Ntensibe Rd</p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Interactive contact form (7 cols) */}
-          <div className="lg:col-span-7 bg-white border border-slate-100 rounded-2xl p-6 md:p-8 shadow-xs">
-            {!isSent ? (
-              <form onSubmit={handleFormSubmit} className="space-y-4">
-                <h4 className="font-display font-bold text-lg text-slate-900 border-b border-slate-100 pb-3 flex items-center space-x-2">
-                  <BookmarkCheck className="w-5 h-5 text-[#0f594b]" />
-                  <span>{language === 'en' ? 'Send an Official Inquiry' : 'Weereza Okusaba Kw\'Ofisi'}</span>
-                </h4>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label htmlFor="name" className="text-xs font-semibold text-slate-700">{language === 'en' ? 'Your Full Name *' : 'Erinnya lyo lyona *'}</label>
+          {/* Right Column: Contact Inquiry Form (col-span-7) */}
+          <div className="lg:col-span-7 bg-slate-50 border border-slate-200 p-6 sm:p-10 rounded-3xl shadow-sm flex flex-col justify-between">
+            {!success ? (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-[#003366] uppercase tracking-wider">Your Name</label>
                     <input
                       type="text"
-                      id="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className={`w-full px-3.5 py-2 text-xs bg-slate-50 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f594b] ${errors.name ? 'border-red-400' : 'border-slate-200'}`}
-                      placeholder="Jane Doe"
+                      required
+                      placeholder="Agnes Namatovu"
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      className="w-full text-xs bg-white border border-slate-300 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#007BC4] focus:ring-1 focus:ring-[#007BC4] text-slate-900 font-medium placeholder-slate-400"
                     />
-                    {errors.name && <p className="text-[10px] text-red-500 font-semibold">{errors.name}</p>}
                   </div>
-
-                  <div className="space-y-1">
-                    <label htmlFor="email" className="text-xs font-semibold text-slate-700">{language === 'en' ? 'Email Address *' : 'Email Address *'}</label>
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-[#003366] uppercase tracking-wider">Your Email</label>
                     <input
                       type="email"
-                      id="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className={`w-full px-3.5 py-2 text-xs bg-slate-50 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f594b] ${errors.email ? 'border-red-400' : 'border-slate-200'}`}
-                      placeholder="jane@example.com"
+                      required
+                      placeholder="agnes@example.com"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      className="w-full text-xs bg-white border border-slate-300 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#007BC4] focus:ring-1 focus:ring-[#007BC4] text-slate-900 font-medium placeholder-slate-400"
                     />
-                    {errors.email && <p className="text-[10px] text-red-500 font-semibold">{errors.email}</p>}
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <label htmlFor="subject" className="text-xs font-semibold text-slate-700">{language === 'en' ? 'Subject Area *' : 'Omutwe gw\'ebbaluwa *'}</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-[#003366] uppercase tracking-wider">Subject / Inquiry Context</label>
                   <input
                     type="text"
-                    id="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
-                    className={`w-full px-3.5 py-2 text-xs bg-slate-50 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f594b] ${errors.subject ? 'border-red-400' : 'border-slate-200'}`}
-                    placeholder={language === 'en' ? 'E.g., Sports equipment donation / School partnership inquiry' : 'Okugeza: Okuyamba n\'ebikozesebwa mu mizannyo'}
+                    required
+                    placeholder="E.g. Sports Sponsorship, School Outreach, Reforestation Volunteering"
+                    value={form.subject}
+                    onChange={(e) => setForm({ ...form, subject: e.target.value })}
+                    className="w-full text-xs bg-white border border-slate-300 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#007BC4] focus:ring-1 focus:ring-[#007BC4] text-slate-900 font-medium placeholder-slate-400"
                   />
-                  {errors.subject && <p className="text-[10px] text-red-500 font-semibold">{errors.subject}</p>}
                 </div>
 
-                <div className="space-y-1">
-                  <label htmlFor="message" className="text-xs font-semibold text-slate-700">{language === 'en' ? 'Message Text *' : 'Ebigambo by\'Obubaka *'}</label>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-[#003366] uppercase tracking-wider">Message</label>
                   <textarea
-                    id="message"
-                    rows={4}
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    className={`w-full px-3.5 py-2 text-xs bg-slate-50 border rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f594b] ${errors.message ? 'border-red-400' : 'border-slate-200'}`}
-                    placeholder={language === 'en' ? 'Write detailed questions or partnership proposals here...' : 'Wandika ebibuuzo byo oba eby\'okukolagana wano...'}
+                    required
+                    rows={4.5}
+                    placeholder="Provide detailed context on how we can collaborate, participate, or support your initiative..."
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    className="w-full text-xs bg-white border border-slate-300 rounded-xl px-4 py-3.5 focus:outline-none focus:border-[#007BC4] focus:ring-1 focus:ring-[#007BC4] text-slate-900 font-medium resize-none placeholder-slate-400"
                   />
-                  {errors.message && <p className="text-[10px] text-red-500 font-semibold">{errors.message}</p>}
                 </div>
 
-                <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full py-2.5 text-xs font-bold text-white bg-[#0f594b] hover:bg-[#08231d] disabled:bg-stone-300 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-sm cursor-pointer uppercase tracking-wider"
-                  >
-                    {isSubmitting ? (
-                      <span>{language === 'en' ? 'Sending inquiry...' : 'Okusaba Kuweerezebwa...'}</span>
-                    ) : (
-                      <>
-                        <Send className="w-3.5 h-3.5 text-gold-500" />
-                        <span>{language === 'en' ? 'Send Official Message' : 'Weereza Obubaka bw\'Ofisi'}</span>
-                      </>
-                    )}
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  className="w-full inline-flex items-center justify-center py-4 bg-[#007BC4] hover:bg-[#003366] text-white font-bold uppercase tracking-widest rounded-xl text-xs transition-all shadow-md cursor-pointer gap-2"
+                >
+                  <Send className="w-4 h-4 text-white" />
+                  <span>Send Inquiry Draft</span>
+                </button>
               </form>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-center space-y-4 py-8 animate-scaleUp">
-                <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-emerald-600" />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="font-display font-bold text-lg text-slate-800">{language === 'en' ? 'Inquiry Sent Successfully!' : 'Obubaka Kuweerezeddwa Bulungi!'}</h4>
-                  <p className="text-xs text-slate-500 max-w-md mx-auto">
-                    {language === 'en' 
-                      ? 'Thank you. Your message has been logged in our secretariat intake database. Our communications officer will respond via email as soon as possible.'
-                      : 'Webale nnyo. Obubaka bwo butuusiddwa mu database yaffe ey\'okunyunga. Twajja kukuddamu butereevu.'}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-12 space-y-6"
+              >
+                <CheckCircle2 className="w-16 h-16 text-[#7DC242] mx-auto" />
+                <div className="space-y-3">
+                  <h4 className="text-2xl font-bold font-serif italic text-[#003366]">Inquiry Draft Processed!</h4>
+                  <p className="text-xs text-slate-700 max-w-md mx-auto leading-relaxed font-medium">
+                    Thank you for contacting us. We have cached your message details locally. To complete the official submission and alert our Kampala secretariat immediately, please trigger the official pre-filled email client:
                   </p>
                 </div>
-                <button
-                  onClick={resetForm}
-                  className="px-4 py-2 text-xs font-semibold text-white bg-[#0f594b] hover:bg-[#08231d] rounded-lg transition-colors cursor-pointer"
-                >
-                  {language === 'en' ? 'Send another inquiry' : 'Weereza obubaka obulala'}
-                </button>
-              </div>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                  <a
+                    href={getMailtoLink()}
+                    className="inline-flex items-center justify-center px-6 py-3 bg-[#7DC242] hover:bg-[#007BC4] text-white font-bold rounded-xl text-xs uppercase tracking-wider gap-2 shadow-sm transition-colors"
+                  >
+                    <Mail className="w-4.5 h-4.5" />
+                    <span>Open Email Draft</span>
+                  </a>
+                  <button
+                    onClick={() => {
+                      setSuccess(false);
+                      setForm({ name: '', email: '', subject: '', message: '' });
+                    }}
+                    className="inline-flex items-center justify-center px-6 py-3 bg-white hover:bg-slate-100 text-[#003366] font-bold rounded-xl text-xs uppercase tracking-wider border border-slate-300 transition-colors"
+                  >
+                    <span>Write Another Message</span>
+                  </button>
+                </div>
+              </motion.div>
             )}
           </div>
 
-        </div>
-
-        {/* Interactive Google Map Section */}
-        <div className="max-w-5xl mx-auto mt-12">
-          <div className="bg-white border border-slate-100 rounded-2xl p-6 md:p-8 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="space-y-1">
-                <span className="text-[10px] font-mono bg-emerald-50 text-emerald-700 px-2.5 py-0.5 rounded-full uppercase font-semibold border border-emerald-100/50">
-                  {language === 'en' ? 'Interactive Map' : 'Mappu Ey\'omutimbagano'}
-                </span>
-                <h4 className="font-display font-bold text-lg text-slate-900">
-                  {language === 'en' ? 'Visit Our Secretariat' : 'Kyalira Ofisi Yaffe Enkulu'}
-                </h4>
-                <p className="text-xs text-slate-500">
-                  {language === 'en' 
-                    ? 'Plot 1420 Ntensibe Road, Kitintale, Kampala, Uganda' 
-                    : 'Plot 1420 Ntensibe Road, Kitintale, Kampala, Uganda'}
-                </p>
-              </div>
-              <a
-                href="https://www.google.com/maps/search/?api=1&query=Plot+1420+Ntensibe+Road,+Kitintale,+Kampala,+Uganda"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center space-x-1.5 text-xs font-bold text-[#0f594b] hover:text-[#08231d] bg-emerald-50 hover:bg-emerald-100/70 px-4 py-2.5 rounded-xl cursor-pointer transition-all self-start sm:self-center"
-              >
-                <span>{language === 'en' ? 'Open in Google Maps' : 'Ggula mu Google Maps'}</span>
-                <span>&nearr;</span>
-              </a>
-            </div>
-
-            {/* Google Map IFrame Container */}
-            <div className="relative w-full h-[350px] sm:h-[420px] rounded-xl overflow-hidden border border-slate-200/60 shadow-inner bg-slate-100">
-              <iframe
-                title="PID Secretariat Office Map"
-                src="https://maps.google.com/maps?q=Plot%201420%20Ntensibe%20Road,%20Kitintale,%20Kampala,%20Uganda&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen={true}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="absolute inset-0 w-full h-full grayscale-[15%] contrast-[105%] hover:grayscale-0 transition-all duration-500"
-              />
-            </div>
-            
-            <div className="flex items-center space-x-2.5 text-[11px] text-slate-400 bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">
-              <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-              <span>
-                {language === 'en' 
-                  ? 'Easily accessible via Port Bell Road or Old Port Bell Road. Visitors are welcome during official business hours (Mon-Fri, 9:00 AM - 5:00 PM).' 
-                  : 'Oyinza okutuukayo okuyitira ku Port Bell Road oba Old Port Bell Road. Ofisi eggulwa lwa Mmande ku ssaawa ssatu ez\'oku makya okutuuka Lwakutaano ssaawa emu ey\'olweggulo.'}
-              </span>
-            </div>
-          </div>
         </div>
 
       </div>

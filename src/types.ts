@@ -1,75 +1,77 @@
-export interface MetricItem {
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+export interface ImpactStat {
   id: string;
+  label: string;
   value: string;
   numericValue: number;
-  label: string;
+  suffix: string;
+  icon: string;
   description: string;
-  iconName: string;
 }
 
-export interface CoreValue {
+export interface Partner {
   name: string;
+  type: 'government' | 'ngo' | 'sports' | 'local';
+  iconName: string;
+  description?: string;
+}
+
+export interface StrategyPillar {
+  title: string;
+  icon: string;
   tagline: string;
   description: string;
-  iconName: string;
+  bullets: string[];
 }
 
-export interface PartnerItem {
+export interface ValueItem {
+  title: string;
+  tagline: string;
+  description: string;
+  icon: string;
+}
+
+export interface VolunteerApplication {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  volunteerType: 'student' | 'professional';
+  interests: string[];
+  message: string;
+  submittedAt: string;
+}
+
+export interface InternshipApplication {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  academicBackground: string;
+  department: string;
+  statement: string;
+  submittedAt: string;
+}
+
+export interface FundraiserRegistration {
+  id: string;
   name: string;
-  category: string;
-  description: string;
-  logoUrl?: string;
+  email: string;
+  groupType: 'individual' | 'student' | 'community' | 'organization';
+  targetAmount: number;
+  pitch: string;
+  submittedAt: string;
 }
 
-export interface PolicyItem {
-  title: string;
-  code: string;
-  description: string;
-  scope: string;
-  iconName: string;
-}
-
-export interface OrgNode {
-  title: string;
-  subtitle: string;
-  description: string;
-  level: 'board' | 'secretariat' | 'district';
-  children?: OrgNode[];
-}
-
-export interface OpportunityDetails {
-  title: string;
-  description: string;
-  highlights: string[];
-  contactEmail: string;
-}
-
-export interface ContactFormInput {
+export interface ContactMessage {
+  id: string;
   name: string;
   email: string;
   subject: string;
   message: string;
-}
-
-export interface FundraiserFormInput {
-  fullName: string;
-  email: string;
-  phone: string;
-  groupType: 'individual' | 'student_group' | 'community' | 'corporate';
-  motivation: string;
-}
-
-export interface Programme {
-  id: string;
-  title: string;
-  tagline: string;
-  shortDescription: string;
-  longDescription: string;
-  bgImage: string;
-  detailImage: string;
-  iconName: string;
-  objectives: string[];
-  activities: string[];
-  outcomes: string[];
-  galleryImages?: string[];
+  submittedAt: string;
 }

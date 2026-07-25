@@ -1,0 +1,281 @@
+{
+  "siteSettings": {
+    "siteTitle": "Partnership for Integrated Development Uganda (PID)",
+    "siteTagline": "Empowering Grassroots Communities Through Sport, Health & Sustainable Livelihoods",
+    "announcementText": "Official Registered NGO Reg No: INDR177427311NB | Kitintale, Kampala",
+    "theme": "olive",
+    "fontSizePercent": 100,
+    "uiStyle": "macos",
+    "glassIntensity": 20,
+    "cornerRadius": 22,
+    "reduceMotion": false,
+    "decapBranch": "main",
+    "decapRepo": "pid-uganda/website-cms"
+  },
+  "seoSettings": {
+    "metaTitle": "PID Uganda | Community Empowerment & Grassroots Sports NGO",
+    "metaDescription": "PID Uganda is an indigenous non-governmental organization empowering children, youth, and women through sports, primary healthcare, digital skills, and climate action.",
+    "keywords": "PID Uganda, NGO Kampala, Kitintale youth sports, Uganda grassroots development, community health, climate action",
+    "ogImage": "/images/mtn-sos-148.jpg"
+  },
+  "pageHero": {
+    "heroTitle1": "Empowering Grassroots Communities in Uganda Through",
+    "heroTitle2": "{Sports, Health & Sustainable Livelihoods}",
+    "heroDescription": "Partnership for Integrated Development Uganda (PID) is a registered non-governmental organization dedicated to improving lives of vulnerable youth, children, and women through community-led solutions.",
+    "heroImage": "/images/mtn-sos-148.jpg",
+    "heroCtaPrimary": "Explore Our Programs",
+    "heroCtaSecondary": "Support Our Mission"
+  },
+  "pageAbout": {
+    "aboutHeaderBgImage": "/images/alx-98.jpg",
+    "aboutTagline": "Rooted in Community Excellence",
+    "aboutTitle": "About PID Uganda",
+    "aboutParagraph1": "Partnership for Integrated Development Uganda (PID) was established in 2010 as a community-driven initiative in Kitintale, Kampala. Formally registered under NGO Registration No. INDR177427311NB, PID works hand-in-hand with local leaders, schools, and families.",
+    "aboutParagraph2": "Our holistic framework integrates sports for development, primary healthcare access, environmental protection, and economic empowerment to break generational poverty cycles across Uganda.",
+    "aboutMissionText": "To foster inclusive community development through grassroots partnerships, sports engagement, healthcare access, and climate resilience.",
+    "aboutVisionText": "A resilient Ugandan society where youth, children, and women thrive with dignity, equal opportunities, and sustainable livelihoods."
+  },
+  "pagePillars": {
+    "pillarsHeaderBgImage": "/images/gbls-20.jpg",
+    "pillarsTagline": "Integrated Intervention Framework",
+    "pillarsTitle": "Our Strategic Pillars",
+    "pillarsSubtitle": "Four interconnected program areas delivering measurable social impact across Uganda's urban and rural communities."
+  },
+  "pageImpact": {
+    "impactHeaderBgImage": "/images/ad4-197.jpg",
+    "impactTagline": "Expected Impact",
+    "impactTitle": "Our Measurable {Social Ledger}",
+    "impactSubtitle": "PID is committed to transparent, data-led learning that tracks meaningful community outcomes."
+  },
+  "pagePartners": {
+    "partnersHeaderBgImage": "/images/ad4-203.jpg",
+    "partnersTagline": "Working Together",
+    "partnersTitle": "Institutional Collaboration for {National Reach}",
+    "partnersSubtitle": "PID works with government, schools, communities and development partners to extend sustainable impact."
+  },
+  "pageOpportunities": {
+    "opportunitiesHeaderBgImage": "/images/mtn-sos-149.jpg",
+    "opportunitiesTagline": "Join Our Movement",
+    "opportunitiesTitle": "{Apply}, {Partner}, or {Raise Support}",
+    "opportunitiesSubtitle": "Volunteer, apply for a mentored internship, sponsor a programme or partner with PID."
+  },
+  "services": [
+    {
+      "id": "s1",
+      "title": "Youth Sports & Talent Development",
+      "category": "Sports",
+      "description": "Providing football equipment, coaching academies, and life-skills tournaments for over 1,200 young athletes in Kitintale and Nakawa.",
+      "icon": "Trophy"
+    },
+    {
+      "id": "s2",
+      "title": "Community Primary Healthcare Outreach",
+      "category": "Health",
+      "description": "Mobile immunization clinics, reproductive health education, hygiene kits, and WASH infrastructure in informal settlements.",
+      "icon": "Heart"
+    },
+    {
+      "id": "s3",
+      "title": "Youth Digital Literacy & Livelihoods",
+      "category": "Education",
+      "description": "Hands-on computer training, financial literacy workshops, and micro-business mentorship for young women and school dropouts.",
+      "icon": "Laptop"
+    },
+    {
+      "id": "s4",
+      "title": "Climate Action & Tree Planting Nurseries",
+      "category": "Environment",
+      "description": "Establishment of indigenous tree nurseries, school eco-clubs, and community waste-to-value composting projects.",
+      "icon": "Tree"
+    }
+  ],
+  "packages": [
+    {
+      "id": "pkg1",
+      "title": "Youth Sports Coaching Fellowship",
+      "type": "Volunteer Program",
+      "duration": "2 - 12 Weeks",
+      "location": "Kampala, Uganda",
+      "cost": "$450 / 2 Weeks",
+      "description": "Train local grassroots soccer coaches, facilitate life-skills sessions, and co-organize community tournaments with local schools.",
+      "image": "/images/arg-12.jpg"
+    },
+    {
+      "id": "pkg2",
+      "title": "Community Health & WASH Outreach",
+      "type": "Healthcare Internship",
+      "duration": "4 - 8 Weeks",
+      "location": "Kitintale, Kampala",
+      "cost": "$600 / Month",
+      "description": "Assist local medical workers in mobile health screening clinics, maternal nutrition workshops, and hygiene kit distributions.",
+      "image": "/images/ad4-23.jpg"
+    },
+    {
+      "id": "pkg3",
+      "title": "Eco-Schools & Climate Action Expedition",
+      "type": "Eco-Tourism & Service",
+      "duration": "2 - 4 Weeks",
+      "location": "Central Uganda",
+      "cost": "$520 / 2 Weeks",
+      "description": "Plant indigenous trees with local primary schools, set up school gardens, and explore Ugandan wildlife conservation parks.",
+      "image": "/images/ysu-9716.jpg"
+    }
+  ],
+  "blogPosts": [
+    {
+      "id": "post1",
+      "title": "Kitintale Annual Youth Sports Tournament Champions 1,200 Athletes",
+      "author": "Secretariat Media Team",
+      "date": "2026-06-15",
+      "category": "Sports Development",
+      "summary": "Over 1,200 young boys and girls participated in the 2026 Kitintale Peace & Talent Tournament, combining soccer matches with health sensitization.",
+      "image": "/images/gbls-25.jpg",
+      "readTime": "4 min read"
+    },
+    {
+      "id": "post2",
+      "title": "Launching 5 New Digital Literacy Labs for Women Entrepreneurs",
+      "author": "Programs Director",
+      "date": "2026-05-28",
+      "category": "Digital Empowerment",
+      "summary": "PID Uganda officially commissioned five community solar-powered computer stations targeting young women business owners.",
+      "image": "/images/alx-98.jpg",
+      "readTime": "3 min read"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "t1",
+      "name": "Sarah Namukasa",
+      "role": "Youth Football Academy Parent",
+      "comment": "PID Uganda transformed my son's life through sports and discipline. He now stays focused on his studies and has developed true leadership skills.",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300"
+    },
+    {
+      "id": "t2",
+      "name": "David Ochieng",
+      "role": "International Volunteer",
+      "comment": "Working with PID Uganda on community health outreach in Kitintale was the most rewarding experience of my life. The team's passion is inspiring.",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300"
+    }
+  ],
+  "contactInfo": {
+    "contactHeaderBgImage": "/images/ysu-9660.jpg",
+    "contactTagline": "Get in Touch With Our Secretariat",
+    "contactTitle": "Contact PID Uganda",
+    "contactAddress": "Plot 1420 Ntensibe Road, Kitintale, Kampala, Uganda (P.O. Box 132061)",
+    "contactEmail": "info@piduganda.org",
+    "contactPhone": "+256 776 526 344",
+    "contactHours": "Monday - Friday: 8:00 AM - 5:00 PM EAT"
+  },
+  "administrators": [
+    {
+      "id": "adm1",
+      "username": "admin",
+      "name": "Executive Secretariat Admin",
+      "email": "admin@piduganda.org",
+      "role": "Super Administrator",
+      "status": "Active"
+    },
+    {
+      "id": "adm2",
+      "username": "editor",
+      "name": "Programs Content Editor",
+      "email": "media@piduganda.org",
+      "role": "Content Editor",
+      "status": "Active"
+    }
+  ],
+  "galleryImages": [
+    {
+      "id": "g1",
+      "url": "/images/mtn-sos-148.jpg",
+      "caption": "Young people celebrating through sport and community activity."
+    },
+    {
+      "id": "g2",
+      "url": "/images/alx-98.jpg",
+      "caption": "Students gathering for a PID school outreach activity."
+    },
+    {
+      "id": "g3",
+      "url": "/images/gbls-20.jpg",
+      "caption": "Team-building and sport activities strengthening community bonds."
+    },
+    {
+      "id": "g4",
+      "url": "/images/arg-12.jpg",
+      "caption": "Children celebrating teamwork and friendship through sport."
+    },
+    {
+      "id": "g5",
+      "url": "/images/ad4-23.jpg",
+      "caption": "A student taking part in a school hygiene and wellbeing activity."
+    },
+    {
+      "id": "g6",
+      "url": "/images/gbls-25.jpg",
+      "caption": "A facilitated group activity encouraging movement and participation."
+    },
+    {
+      "id": "g7",
+      "url": "/images/ysu-22.jpg",
+      "caption": "A young footballer developing confidence and sporting skills."
+    },
+    {
+      "id": "g8",
+      "url": "/images/ysu-9660.jpg",
+      "caption": "Children relaxing and connecting during a community sports day."
+    },
+    {
+      "id": "g9",
+      "url": "/images/ysu-9716.jpg",
+      "caption": "Creative outdoor play supporting healthy childhood development."
+    },
+    {
+      "id": "g10",
+      "url": "/images/zr4a0241.jpg",
+      "caption": "A young participant discovering a new sport in Kampala."
+    },
+    {
+      "id": "g11",
+      "url": "/images/zr4a9887.jpg",
+      "caption": "Children building cooperation through guided play."
+    },
+    {
+      "id": "g12",
+      "url": "/images/ad4-197.jpg",
+      "caption": "Students celebrating friendship during a school activity."
+    },
+    {
+      "id": "g13",
+      "url": "/images/ad4-203.jpg",
+      "caption": "Young people enjoying an inclusive community learning activity."
+    },
+    {
+      "id": "g14",
+      "url": "/images/ad4-226.jpg",
+      "caption": "Schoolchildren participating in a PID outreach day."
+    },
+    {
+      "id": "g15",
+      "url": "/images/mtn-sos-149.jpg",
+      "caption": "Celebrating movement, confidence and community connection."
+    },
+    {
+      "id": "g16",
+      "url": "/images/mtn-sos-151.jpg",
+      "caption": "Children and mentors sharing an energetic sports session."
+    },
+    {
+      "id": "g17",
+      "url": "/images/pprrp-50.jpg",
+      "caption": "Young friends watching a community activity together."
+    },
+    {
+      "id": "g18",
+      "url": "/images/spd-69.jpg",
+      "caption": "Children developing confidence through play and participation."
+    }
+  ]
+}
