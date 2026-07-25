@@ -477,12 +477,22 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const saved = localStorage.getItem('pid_website_content');
       if (saved) {
         const parsed = JSON.parse(saved);
+        const savedServices = Array.isArray(parsed.services) ? parsed.services : [];
+        const mergedServices = [
+          ...DEFAULT_CONTENT.services.map((defaultService) =>
+            savedServices.find((service: ServiceItem) => service.id === defaultService.id) || defaultService
+          ),
+          ...savedServices.filter(
+            (service: ServiceItem) =>
+              !DEFAULT_CONTENT.services.some((defaultService) => defaultService.id === service.id)
+          ),
+        ];
         setContent({
           ...DEFAULT_CONTENT,
           ...parsed,
           siteLogoUrl: parsed.siteLogoUrl || DEFAULT_CONTENT.siteLogoUrl,
           galleryImages: parsed.galleryImages || DEFAULT_CONTENT.galleryImages,
-          services: parsed.services || DEFAULT_CONTENT.services,
+          services: mergedServices,
           packages: parsed.packages || DEFAULT_CONTENT.packages,
           blogPosts: parsed.blogPosts || DEFAULT_CONTENT.blogPosts,
           testimonials: parsed.testimonials || DEFAULT_CONTENT.testimonials,

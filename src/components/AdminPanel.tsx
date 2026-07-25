@@ -1434,7 +1434,7 @@ export const AdminPanel: React.FC = () => {
                             <span>Services & Key Intervention Programs</span>
                           </h3>
                           <p className="text-xs text-slate-400 mt-1">
-                            Add, edit, or delete core services offered by PID Uganda.
+                            Edit every programme, governance, policy and impact entry shown in the complete website reference.
                           </p>
                         </div>
 

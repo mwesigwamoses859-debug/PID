@@ -62,6 +62,153 @@
   },
   "services": [
     {
+      "id": "edu-access-equity",
+      "title": "Access & Equity",
+      "category": "Education",
+      "description": "PID is committed to breaking barriers and ensuring that every child - regardless of background, location, or circumstance - has the opportunity to thrive. Rooted in our journey from Kampala's informal settlements to a national mandate, we prioritize equitable access to education and empowerment for vulnerable children across Uganda.\nScholarships: We provide financial support to children from disadvantaged families, enabling them to stay in school and pursue their education without interruption.\nScholastic Materials: Through the distribution of essential learning tools - books, uniforms, and supplies - we remove obstacles that often prevent children from fully participating in education.\nMentorship: Our mentors guide, inspire, and support vulnerable children, helping them build resilience, confidence, and life skills that extend beyond the classroom.",
+      "icon": "GraduationCap"
+    },
+    {
+      "id": "edu-quality",
+      "title": "Quality Improvement",
+      "category": "Education",
+      "description": "PID is dedicated to raising the standard of education by equipping teachers with the skills and tools they need to create inclusive, engaging, and future-ready classrooms. Building on our national mandate and presence across Uganda, we invest in teacher development as a cornerstone of community transformation.\nInclusive Pedagogy: We train teachers to embrace diversity in the classroom, ensuring that children from urban, rural, and refugee communities feel valued and supported in their learning journey.\nDigital Literacy: PID empowers teachers with digital skills that enhance teaching methods and prepare learners for a connected world.\nLearner-Centered Approaches: We promote teaching strategies that place the child at the heart of the learning process, encouraging creativity, critical thinking, and active participation.",
+      "icon": "BookOpen"
+    },
+    {
+      "id": "edu-adult-literacy",
+      "title": "Adult Literacy",
+      "category": "Education",
+      "description": "PID recognizes that empowering communities goes beyond children - it extends to adults who often missed out on formal education. We establish community learning hubs that provide literacy and vocational skills tailored to local needs as safe, inclusive spaces for growth and opportunity.\nLiteracy Programs: We equip adults with essential reading, writing, and numeracy skills, enabling them to participate more fully in society, access services, and support their families.\nVocational Training: Through practical courses in trades, entrepreneurship, and digital skills, we help adults build livelihoods, strengthen household resilience, and contribute to community development.\nCommunity Hubs: Urban, rural, and refugee populations can learn together, share experiences, and foster solidarity.",
+      "icon": "Users"
+    },
+    {
+      "id": "edu-advocacy",
+      "title": "Education Advocacy",
+      "category": "Education",
+      "description": "PID believes that lasting transformation in education requires grassroots action and systemic change. We engage policymakers, education leaders, and stakeholders to strengthen Uganda's education framework and ensure resources reach the most vulnerable communities.\nPolicy Engagement: We collaborate with government ministries, local authorities, and development partners to influence policies that promote inclusion, equity, and quality learning.\nResource Allocation: PID advocates for fair distribution of educational resources across urban, rural, and refugee communities.\nCommunity Voice: We bring the perspectives of children, parents, and teachers into national dialogues.\nEvidence-Based Action: Research, monitoring, and evaluation provide data-driven insights for effective and sustainable reform.",
+      "icon": "Megaphone"
+    },
+    {
+      "id": "edu-digital-inclusion",
+      "title": "Digital Inclusion",
+      "category": "Education",
+      "description": "PID is committed to bridging the digital divide by ensuring that children in rural and underserved communities have equal access to technology and modern learning tools. Digital literacy is essential for empowerment, inclusion, and long-term impact.\nICT Access: We provide rural schools with computers, internet connectivity, and digital resources.\nE-Learning Platforms: Interactive platforms support self-paced learning, connect students to global knowledge, and enhance classroom teaching.\nTeacher Training: We equip educators to integrate ICT into lessons and foster learner-centered approaches.\nEquity in Access: Rural and underserved learners receive fair opportunities to benefit from modern technology.",
+      "icon": "Laptop"
+    },
+    {
+      "id": "health-community",
+      "title": "Community Health & Wellbeing",
+      "category": "Health",
+      "description": "Community Health Outreach: Mobile clinics target maternal health, HIV/AIDS, malaria, and immunization.\nNutrition & Hygiene: We promote balanced diets, safe water, and sanitation practices.\nCapacity Building: We train community health workers and strengthen local health facilities.\nMental Health Awareness: We sensitize communities on mental health and psychosocial support.\nHealth Partnerships: We collaborate with government and private health providers for service delivery.",
+      "icon": "Heart"
+    },
+    {
+      "id": "livelihood-agriculture",
+      "title": "Agricultural Development",
+      "category": "Livelihood",
+      "description": "PID recognizes agriculture as a cornerstone of community resilience and economic growth. Our approach goes beyond subsistence farming to empower households and youth with modern, sustainable practices.\nModern Farming Techniques: We promote climate-smart agriculture, improved seed varieties, irrigation methods, and soil management practices.\nValue Addition: Agro-processing, packaging, and branding help farmers transform raw produce into market-ready products.\nMarket Linkages: We connect smallholder farmers to reliable buyers, cooperatives, and regional supply chains.\nThese interventions integrate gender equity, youth participation, and environmental sustainability to strengthen livelihoods, reduce poverty, and foster inclusive growth.",
+      "icon": "Sprout"
+    },
+    {
+      "id": "livelihood-employment",
+      "title": "Employment Creation",
+      "category": "Livelihood",
+      "description": "PID believes that empowering youth with skills must be matched with opportunities to apply them. Our initiatives bridge the gap between training and meaningful work.\nJob Placement: We collaborate with employers, industry partners, and community networks to secure entry-level positions.\nApprenticeships: Structured apprenticeships provide hands-on experience, mentorship, and career pathways.\nMarket-Driven Skills: Training aligns with labour-market needs in agriculture, technology, and services.\nEntrepreneurship Support: Business incubation, financial literacy, and access to microfinance nurture innovative ideas.",
+      "icon": "Briefcase"
+    },
+    {
+      "id": "livelihood-finance",
+      "title": "Financial Literacy",
+      "category": "Livelihood",
+      "description": "PID empowers communities with the knowledge and skills to manage resources wisely, plan for the future, reduce vulnerability, and build resilience.\nBudgeting: Households learn to create realistic budgets, prioritize essential needs, and track expenses.\nSavings: Savings groups and financial cooperatives help families prepare for emergencies and invest in opportunities.\nInvestment: We provide guidance on safe and productive options, from small enterprises to agricultural ventures.",
+      "icon": "Wallet"
+    },
+    {
+      "id": "livelihood-skills",
+      "title": "Skills Development",
+      "category": "Livelihood",
+      "description": "Practical skills are a gateway to employment, entrepreneurship, and community transformation. PID equips youth and vulnerable groups with vocational training that responds to market demand.\nCarpentry: Furniture making, construction support, and woodcraft.\nTailoring: Garment design, sewing, and fashion entrepreneurship.\nICT: Digital literacy, computer applications, and basic coding.\nAgribusiness: Modern farming, agro-processing, and value-chain management.",
+      "icon": "Wrench"
+    },
+    {
+      "id": "livelihood-entrepreneurship",
+      "title": "Entrepreneurship",
+      "category": "Livelihood",
+      "description": "Entrepreneurship is a pathway to economic independence and community transformation. PID equips youth and women to start and grow sustainable businesses.\nMicrofinance: Small loans and financial services support income-generating activities.\nSavings Groups: Community savings and credit groups foster discipline, collective security, and shared investment.\nBusiness Incubation: Mentorship, training, and access to markets turn ideas into viable enterprises.\nOur approach emphasizes gender inclusion, youth empowerment, and sustainability, creating jobs, strengthening local economies, and building resilience against poverty.",
+      "icon": "Rocket"
+    },
+    {
+      "id": "climate-renewable",
+      "title": "Renewable Energy",
+      "category": "Climate Action & Protection",
+      "description": "PID promotes solar power, biogas, and clean cooking technologies as practical tools for community resilience and environmental protection.",
+      "icon": "Sun"
+    },
+    {
+      "id": "climate-policy",
+      "title": "Climate Policy Engagement",
+      "category": "Climate Action & Protection",
+      "description": "Lasting environmental change requires strong policies and effective enforcement. PID engages in advocacy to influence national and local frameworks that safeguard natural resources.\nAdvocacy for Stronger Laws: We work with policymakers, civil society, and community leaders to prioritize climate resilience, biodiversity protection, and sustainable land use.\nEnforcement Mechanisms: Environmental regulations must be actively upheld.\nCommunity Voice: Youth, women, and grassroots organizations participate in policy dialogue.\nPartnerships: Government agencies, NGOs, and international partners strengthen environmental justice and accountability.\nPID bridges community action and systemic change so sustainability becomes a national priority.",
+      "icon": "Scale"
+    },
+    {
+      "id": "climate-land-use",
+      "title": "Sustainable Land Use",
+      "category": "Climate Action & Protection",
+      "description": "PID promotes land-use practices that protect the environment while enhancing agricultural productivity.\nSoil Conservation: Contour farming, mulching, and agroforestry preserve fertility and prevent erosion.\nWater Harvesting: Rainwater collection, small-scale irrigation, and efficient storage secure reliable water supplies.\nOrganic Farming: Natural fertilizers, crop rotation, and integrated pest management improve yields while protecting health and ecosystems.\nThese programs integrate climate resilience, gender inclusion, and youth participation to strengthen food security and long-term prosperity.",
+      "icon": "Leaf"
+    },
+    {
+      "id": "climate-reforestation",
+      "title": "Reforestation",
+      "category": "Climate Action & Protection",
+      "description": "PID views reforestation as both an environmental and economic strategy, restoring degraded landscapes while creating sustainable livelihoods.\nLarge-Scale Tree Planting: Communities, schools, and youth groups plant indigenous and fruit trees.\nCommunity Forest Management: Training supports conservation, sustainable harvesting, and protection against deforestation.\nClimate Resilience: Trees reduce erosion, improve water retention, and shield communities from climate impacts.\nLivelihood Opportunities: Green jobs, agroforestry, sustainable timber, and non-timber products support income.\nYouth participation, gender inclusion, and environmental education help communities nurture trees into thriving forests.",
+      "icon": "Trees"
+    },
+    {
+      "id": "climate-awareness",
+      "title": "Awareness & Advocacy",
+      "category": "Climate Action & Protection",
+      "description": "PID builds resilient communities through knowledge and sensitization around climate-change adaptation and mitigation.\nCommunity Sensitization: Workshops, dialogues, and campaigns explain climate impacts and practical responses.\nAdaptation Strategies: Training covers water conservation, sustainable agriculture, disaster preparedness, and livelihood diversification.\nMitigation Practices: Tree planting, renewable energy, and waste management lower carbon footprints.\nCommunity Advocacy: Local leaders and youth champions influence policy and mobilize collective action.",
+      "icon": "MessageCircle"
+    },
+    {
+      "id": "org-objectives",
+      "title": "Strategic Objectives",
+      "category": "Governance & Systems",
+      "description": "Expand access to inclusive, equitable, and quality education.\nImprove community health outcomes through awareness, prevention, and service delivery.\nEnhance household income and resilience through livelihood and entrepreneurship programmes.\nStrengthen climate resilience and environmental protection at community and national levels.\nBuild strong partnerships with government, NGOs, and donors for sustainable impact.",
+      "icon": "Target"
+    },
+    {
+      "id": "org-structure",
+      "title": "Organizational Structure",
+      "category": "Governance & Systems",
+      "description": "Board of Directors: Provides governance, oversight, and strategic direction.\nExecutive Director: Leads strategy, donor engagement, and partnerships.\nProgram Managers: Oversee Education, Health, Livelihood, and Climate Action sectors.\nFinance & Administration Team: Ensures accountability, compliance, and resource management.\nMonitoring & Evaluation Unit: Tracks impact, learning, and reporting.\nField Officers & Volunteers: Implement activities at community level.",
+      "icon": "Building"
+    },
+    {
+      "id": "org-policies",
+      "title": "Supporting Systems & Policies",
+      "category": "Governance & Systems",
+      "description": "Constitution and bylaws.\nStrategic plan covering three to five years.\nAnnual work plan and budget.\nMonitoring & Evaluation framework with indicators.\nSafeguarding and child protection policy.\nGender and inclusion policy.\nAnti-corruption and financial accountability policy.\nEnvironmental sustainability policy.",
+      "icon": "ShieldCheck"
+    },
+    {
+      "id": "org-donor-engagement",
+      "title": "Donor & Stakeholder Engagement",
+      "category": "Governance & Systems",
+      "description": "Impact Communication: PID shares case studies, success stories, and community testimonials with donors, partners, and stakeholders.",
+      "icon": "Handshake"
+    },
+    {
+      "id": "impact-indicators",
+      "title": "Expected Impact Indicators",
+      "category": "Monitoring & Expected Impact",
+      "description": "Number of scholarships awarded.\nNumber of teachers trained.\nNumber of adults enrolled in literacy programs.\nNumber completing vocational training.\nNumber of rural schools supported.\nNumber of policy briefs submitted.\nNumber of youth engaged.\nNumber of districts with active PID programs.",
+      "icon": "BarChart"
+    },
+    {
       "id": "s1",
       "title": "Youth Sports & Talent Development",
       "category": "Sports",

@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MixedColorText } from './MixedColorText';
 import { useAdmin } from '../context/AdminContext';
+import ProgrammeReference from './ProgrammeReference';
 import {
   GraduationCap,
   Heart,
@@ -403,6 +404,8 @@ export default function StrategyPillars() {
             </motion.div>
           </AnimatePresence>
         </motion.div>
+
+        <ProgrammeReference />
 
         {/* Collapsible Governance, Strategy & Policies section */}
         <motion.div
