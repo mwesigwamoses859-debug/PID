@@ -1,26 +1,59 @@
 # robots.txt for https://www.piduganda.org/
+# Explicit permissions for all global search engines and web crawlers
+
 User-agent: *
 Allow: /
 Disallow: /admin
 
+# Google (Google Search, Images, Mobile)
 User-agent: Googlebot
+User-agent: Googlebot-Image
+User-agent: Googlebot-News
+User-agent: Googlebot-Video
 Allow: /
 
+# Microsoft Bing, Yahoo, DuckDuckGo, Ecosia
 User-agent: Bingbot
-Allow: /
-
+User-agent: msnbot
 User-agent: Slurp
-Allow: /
-
 User-agent: DuckDuckBot
 Allow: /
 
-User-agent: Baiduspider
+# Apple Search, Siri Suggestions, Apple News
+User-agent: Applebot
 Allow: /
 
+# Yandex (Europe & Central Asia)
+User-agent: Yandex
 User-agent: YandexBot
+User-agent: YandexImages
 Allow: /
 
-# Sitemap
-Sitemap: https://www.piduganda.org/sitemap.xml
+# Baidu (China & Asia)
+User-agent: Baiduspider
+User-agent: Baiduspider-image
+Allow: /
+
+# Naver (South Korea) & Seznam (Czech Republic)
+User-agent: Yeti
+User-agent: NaverBot
+User-agent: SeznamBot
+Allow: /
+
+# Social Media Link Previews
+User-agent: facebookexternalhit
+User-agent: Facebot
+User-agent: Twitterbot
+User-agent: LinkedInBot
+User-agent: WhatsApp
+User-agent: TelegramBot
+User-agent: Pinterestbot
+Allow: /
+
+# Web Archiving
+User-agent: ia_archiver
+Allow: /
+
+# Global Sitemap & Host
 Host: https://www.piduganda.org
+Sitemap: https://www.piduganda.org/sitemap.xml
