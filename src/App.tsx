@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { BookOpen, Users, Compass, HelpCircle, ArrowRight, HeartHandshake } from 'lucide-react';
 import Navbar from './components/Navbar';
@@ -21,7 +21,39 @@ import { AdminPanel } from './components/AdminPanel';
 
 function AppContent() {
   const { content, setIsAdminOpen } = useAdmin();
-  const [activeSection, setActiveSection] = useState('home');
+  const validSections = ['home', 'about', 'strategy', 'impact', 'partners', 'gallery', 'opportunities', 'contact', 'admin'];
+
+  const [activeSection, setActiveSection] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      if (validSections.includes(hash)) return hash;
+    }
+    return 'home';
+  });
+
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section);
+    if (typeof window !== 'undefined') {
+      const targetHash = section === 'home' ? '' : `#${section}`;
+      if (window.location.hash !== targetHash) {
+        window.history.replaceState(null, '', targetHash || window.location.pathname);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      if (validSections.includes(hash)) {
+        setActiveSection(hash);
+      } else if (!hash) {
+        setActiveSection('home');
+      }
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
   const [cookieNoticeVisible, setCookieNoticeVisible] = useState(
     () => localStorage.getItem('pid_cookie_notice') !== 'accepted'
   );
@@ -53,7 +85,7 @@ function AppContent() {
         return (
           <div className="space-y-16">
             {/* Earthy Hero intro */}
-            <Hero setActiveSection={setActiveSection} />
+            <Hero setActiveSection={handleSectionChange} />
 
             {/* Quick Navigation Cards - keeping homepage super clean */}
             <section className="py-16 bg-slate-50 border-y border-slate-200">
@@ -76,7 +108,7 @@ function AppContent() {
                     return (
                       <button
                         key={story.id}
-                        onClick={() => { setActiveSection(story.target); window.scrollTo({ top: 0, behavior: 'instant' }); }}
+                        onClick={() => { handleSectionChange(story.target); window.scrollTo({ top: 0, behavior: 'instant' }); }}
                         className="relative min-h-[390px] overflow-hidden rounded-3xl text-left cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 group hover:-translate-y-1 border border-white/60"
                       >
                         <img
@@ -131,7 +163,7 @@ function AppContent() {
 
                 <div className="mt-8 text-center">
                   <button
-                    onClick={() => { setActiveSection('gallery'); window.scrollTo({ top: 0, behavior: 'instant' }); }}
+                    onClick={() => { handleSectionChange('gallery'); window.scrollTo({ top: 0, behavior: 'instant' }); }}
                     className="inline-flex items-center gap-2 rounded-full bg-[#003366] hover:bg-[#007BC4] text-white px-6 py-3 text-xs font-black uppercase tracking-wider transition-colors"
                   >
                     Explore the full gallery
@@ -160,7 +192,7 @@ function AppContent() {
       case 'contact':
         return <Contact />;
       default:
-        return <Hero setActiveSection={setActiveSection} />;
+        return <Hero setActiveSection={handleSectionChange} />;
     }
   };
 
@@ -181,7 +213,7 @@ function AppContent() {
   return (
     <div className="website-shell min-h-screen bg-natural-bg text-natural-text font-sans antialiased selection:bg-natural-tan/20 selection:text-natural-dark flex flex-col">
       {/* Navigation Header */}
-      <Navbar activeSection={activeSection} setActiveSection={setActiveSection} />
+      <Navbar activeSection={activeSection} setActiveSection={handleSectionChange} />
 
       {/* Main Routed Sections with smooth entry transition */}
       <main className="flex-grow">
@@ -199,7 +231,7 @@ function AppContent() {
       </main>
 
       {/* Corporate directory Footer */}
-      <Footer setActiveSection={setActiveSection} />
+      <Footer setActiveSection={handleSectionChange} />
 
       {/* Live Admin CMS Controller Modal Overlay */}
       <AdminPanel />
