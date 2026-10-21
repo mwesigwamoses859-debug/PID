@@ -165,3 +165,14 @@ test('legacy revisions restore after an appearance update', async () => {
   assert.equal(response.status, 200);
   assert.deepEqual((await read(env)).content.designSettings, defaults.designSettings);
 });
+
+test('administrator directory requires sign-in and stays out of public content', async () => {
+  const { onRequestGet: directory } = await import('../functions/api/admin/directory.js');
+  const { env, cookie } = await setup();
+  assert.equal((await directory({ request: request('/api/admin/directory'), env })).status, 401);
+  const response = await directory({ request: request('/api/admin/directory', 'GET', null, cookie), env });
+  assert.equal(response.status, 200);
+  const data = await response.json();
+  assert.deepEqual(data.administrators.map(item => [item.username, item.email, item.status]), [['admin', 'info@piduganda.org', 'Active'], ['editor', 'joshuaopolot@yahoo.com', 'Active']]);
+  assert.equal((await read(env)).content.administrators, undefined);
+});

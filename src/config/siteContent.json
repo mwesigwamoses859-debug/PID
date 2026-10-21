@@ -316,24 +316,7 @@
     "contactPhone": "+256 776 526 344",
     "contactHours": "Monday - Friday: 8:00 AM - 5:00 PM EAT"
   },
-  "administrators": [
-    {
-      "id": "adm1",
-      "username": "admin",
-      "name": "Executive Secretariat Admin",
-      "email": "admin@piduganda.org",
-      "role": "Super Administrator",
-      "status": "Active"
-    },
-    {
-      "id": "adm2",
-      "username": "editor",
-      "name": "Programs Content Editor",
-      "email": "media@piduganda.org",
-      "role": "Content Editor",
-      "status": "Active"
-    }
-  ],
+  "administrators": [],
   "galleryImages": [
     {
       "id": "g1",
@@ -427,3 +410,4 @@
     }
   ]
 }
+

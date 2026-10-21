@@ -381,10 +381,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const authorizedRef = useRef(false);
   const operationRef = useRef({ signature: '', id: '' });
   const publishingRef = useRef(false);
+  const directoryRef = useRef<AdministratorUser[]>([]);
   const unpublishedSections = isAuthorized ? changedSections(content, liveContent) : [];
 
   const applyLive = (data: any) => {
-    const next = { ...DEFAULT_CONTENT, ...data.content, designSettings: normalizeDesign(data.content?.designSettings) } as WebContent;
+    const next = { ...DEFAULT_CONTENT, ...data.content, administrators: authorizedRef.current ? directoryRef.current : [], designSettings: normalizeDesign(data.content?.designSettings) } as WebContent;
     liveRef.current = next;
     setLiveContent(next);
     setLiveRevision(data.revision);
@@ -535,6 +536,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       authorizedRef.current = true;
       const savedDraft = localStorage.getItem('pid_draft_v2');
       const legacyDraft = localStorage.getItem('pid_website_content');
+      try {
+        const directoryResponse = await fetch('/api/admin/directory', { cache: 'no-store', credentials: 'same-origin' });
+        const directory = await directoryResponse.json();
+        directoryRef.current = directoryResponse.ok && Array.isArray(directory.administrators) ? directory.administrators : [];
+      } catch { directoryRef.current = []; }
       let next = liveRef.current;
       let revision = liveRevision;
       try {
@@ -548,11 +554,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const legacy = legacyDraft;
         if (saved) {
           const draft = JSON.parse(saved);
-          setContent({ ...next, ...draft.content, designSettings: normalizeDesign(draft.content?.designSettings) });
+          setContent({ ...next, ...draft.content, administrators: directoryRef.current, designSettings: normalizeDesign(draft.content?.designSettings) });
           setDraftRevision(Number.isSafeInteger(draft.baseRevision) ? draft.baseRevision : 0);
         } else if (legacy) {
           const legacyContent = JSON.parse(legacy);
-          setContent({ ...next, ...legacyContent, designSettings: normalizeDesign(legacyContent.designSettings) });
+          setContent({ ...next, ...legacyContent, administrators: directoryRef.current, designSettings: normalizeDesign(legacyContent.designSettings) });
           setDraftRevision(0);
         } else { setContent(next); setDraftRevision(revision); }
       } catch { setContent(next); setDraftRevision(revision); }
@@ -565,13 +571,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try { localStorage.setItem('pid_draft_v2', JSON.stringify({ content, baseRevision: draftRevision })); } catch {}
     authorizedRef.current = false;
     setIsAuthorized(false);
-    setContent(liveRef.current);
+    setContent({ ...liveRef.current, administrators: [] });
     void fetch('/api/admin/session', { method: 'DELETE', credentials: 'same-origin' }).catch(() => {});
   };
 
   const discardDraft = () => {
     if (!isAuthorized || publishingRef.current) return;
-    setContent(liveRef.current); setDraftRevision(liveRevision); setPublishingMessage('Latest live version loaded into your draft.');
+    setContent({ ...liveRef.current, administrators: directoryRef.current }); setDraftRevision(liveRevision); setPublishingMessage('Latest live version loaded into your draft.');
     try { localStorage.removeItem('pid_website_content'); localStorage.setItem('pid_draft_v2', JSON.stringify({ content: liveRef.current, baseRevision: liveRevision })); } catch {}
   };
 
@@ -581,7 +587,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const response = await fetch(`/api/admin/content?revision=${revision}`, { cache: 'no-store', credentials: 'same-origin' });
     const data = await response.json();
     if (!response.ok) { setPublishingMessage(data.error || 'Could not load this version.'); return; }
-    setContent({ ...DEFAULT_CONTENT, ...data.content, designSettings: normalizeDesign(data.content?.designSettings) }); setDraftRevision(liveRevision);
+    setContent({ ...DEFAULT_CONTENT, ...data.content, administrators: directoryRef.current, designSettings: normalizeDesign(data.content?.designSettings) }); setDraftRevision(liveRevision);
     setPublishingMessage(`Version ${revision} loaded for preview. Publish to make it live.`);
     } catch { setPublishingMessage('Could not load that version. Please check your connection.'); }
   };
@@ -617,7 +623,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const checkSession = async () => {
       try {
         const response = await fetch('/api/admin/session', { cache: 'no-store', credentials: 'same-origin' });
-        if (!response.ok || (await response.json()).authenticated !== true) { authorizedRef.current = false; setIsAuthorized(false); setContent(liveRef.current); }
+        if (!response.ok || (await response.json()).authenticated !== true) { authorizedRef.current = false; setIsAuthorized(false); setContent({ ...liveRef.current, administrators: [] }); }
       } catch { /* A temporary connection failure must not erase an editing session. */ }
     };
     const timer = window.setInterval(checkSession, 60000);
@@ -750,7 +756,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           packages: parsed.packages || content.packages,
           blogPosts: parsed.blogPosts || content.blogPosts,
           testimonials: parsed.testimonials || content.testimonials,
-          administrators: parsed.administrators || content.administrators,
+          administrators: directoryRef.current,
           seoSettings: parsed.seoSettings || content.seoSettings,
           decapBranch: parsed.siteSettings?.decapBranch || 'main',
           decapRepo: parsed.siteSettings?.decapRepo || 'pid-uganda/website-cms',
