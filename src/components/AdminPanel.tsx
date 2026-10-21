@@ -7,6 +7,8 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAdmin, ServiceItem, PackageItem, BlogPostItem, TestimonialItem, AdministratorUser, GalleryImage } from '../context/AdminContext';
 import { Logo } from './Logo';
+import { PublishToolbar, PublishingWorkspace } from './PublishingWorkspace';
+import { uploadImageData } from '../lib/publishing';
 import { 
   X, Lock, ShieldAlert, Sliders, Type, Image, RefreshCw, 
   Plus, Trash2, CheckCircle2, LogOut, Link as LinkIcon,
@@ -31,9 +33,9 @@ const SUGGESTED_IMAGES = [
  * Helper to compress high-res images uploaded from local computer
  * converting them to optimized WebP/JPEG Data URLs.
  */
-const compressImageFile = (file: File, maxWidth = 1920, maxHeight = 1080, quality = 0.85): Promise<string> => {
-  return new Promise((resolve) => {
-    if (file.type === 'image/svg+xml' || file.size < 80 * 1024) {
+const compressImageFile = async (file: File, maxWidth = 1400, maxHeight = 1000, quality = 0.78): Promise<string> => {
+  const processed: string = await new Promise((resolve) => {
+    if (file.size < 80 * 1024 && ['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type)) {
       const reader = new FileReader();
       reader.onload = (e) => resolve((e.target?.result as string) || '');
       reader.onerror = () => resolve('');
@@ -77,6 +79,8 @@ const compressImageFile = (file: File, maxWidth = 1920, maxHeight = 1080, qualit
     reader.onerror = () => resolve('');
     reader.readAsDataURL(file);
   });
+  if (!processed) throw new Error('Could not process this image.');
+  return uploadImageData(processed);
 };
 
 interface ImageFieldWithUploadProps {
@@ -105,8 +109,8 @@ const ImageFieldWithUpload: React.FC<ImageFieldWithUploadProps> = ({
         onChange(dataUrl);
         if (onNotify) onNotify(`Uploaded "${file.name}" from local computer!`);
       }
-    } catch {
-      if (onNotify) onNotify('Failed to process image file.');
+    } catch (error) {
+      if (onNotify) onNotify(error instanceof Error ? error.message : 'Failed to process image file.');
     } finally {
       setIsUploading(false);
       if (e.target) e.target.value = '';
@@ -273,7 +277,6 @@ export const AdminPanel: React.FC = () => {
   // Status notification state
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
   const [copiedYml, setCopiedYml] = useState(false);
-  const [isSimulatingDeploy, setIsSimulatingDeploy] = useState(false);
 
   // Gallery input states
   const [newPhotoUrl, setNewPhotoUrl] = useState('');
@@ -366,18 +369,6 @@ export const AdminPanel: React.FC = () => {
     triggerSaveStatus('Donation record added.');
   };
 
-  const readRevisions = () => {
-    try { return JSON.parse(localStorage.getItem('pid_content_revisions') || '[]'); } catch { return []; }
-  };
-
-  const createRevision = (status = 'Published') => {
-    const revisions = readRevisions();
-    revisions.unshift({ id: `rev-${Date.now()}`, date: new Date().toLocaleString(), status, snapshot: content });
-    localStorage.setItem('pid_content_revisions', JSON.stringify(revisions.slice(0, 15)));
-    setLocalDataVersion((value) => value + 1);
-    triggerSaveStatus(`${status} revision created.`);
-  };
-
   const handleSeoChange = (key: string, val: string) => {
     updateContent({
       seoSettings: {
@@ -393,14 +384,6 @@ export const AdminPanel: React.FC = () => {
     setCopiedYml(true);
     triggerSaveStatus('Copied Decap admin/config.yml to clipboard!');
     setTimeout(() => setCopiedYml(false), 3000);
-  };
-
-  const handleSimulateGitDeploy = () => {
-    setIsSimulatingDeploy(true);
-    setTimeout(() => {
-      setIsSimulatingDeploy(false);
-      triggerSaveStatus('This editor saves local drafts. Export JSON and update the repository to publish.');
-    }, 1800);
   };
 
   const handleImportJson = () => {
@@ -619,7 +602,7 @@ export const AdminPanel: React.FC = () => {
                 </span>
                 <span className="hidden md:flex px-2 py-0.5 rounded text-[9px] font-mono uppercase bg-[#7DC242]/20 text-[#7DC242] font-bold border border-[#7DC242]/40 items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#7DC242] animate-pulse" />
-                  Local Draft Editor
+                  Secure Live Publishing
                 </span>
               </div>
               <p className="text-[10px] text-sky-200/80 flex items-center gap-1">
@@ -635,12 +618,12 @@ export const AdminPanel: React.FC = () => {
               <>
                 <button
                   type="button"
-                  onClick={() => triggerSaveStatus("Changes saved as a draft in this browser. Export JSON to publish through the repository.")}
+                  onClick={() => setActiveTab('publishing')}
                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#7DC242] hover:bg-[#6eb335] text-slate-950 font-black rounded-lg text-xs transition-all cursor-pointer shadow-md border border-emerald-300/40"
-                  title="Save & Save Local Draft Immediately"
+                  title="Review and publish website changes"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5 text-slate-950" />
-                  <span className="hidden sm:inline">Save Local Draft</span>
+                  <span className="hidden sm:inline">Review & Publish</span>
                 </button>
 
                 <button
@@ -712,7 +695,7 @@ export const AdminPanel: React.FC = () => {
                     </div>
                     <div>
                       <h3 className="text-xl font-bold text-white tracking-tight">
-                        Decap CMS Admin Console
+                        PID Website Editor
                       </h3>
                       <p className="text-xs text-slate-400 mt-1">
                         Sign in to edit text, background images, packages & blog posts
@@ -861,55 +844,8 @@ export const AdminPanel: React.FC = () => {
                 {/* MAIN CONTENT WORKSPACE */}
                 <div className="flex-1 min-w-0 p-3 sm:p-5 md:p-8 space-y-6 overflow-y-auto">
                   
-                  {/* PERSISTENT DEDICATED SAVE & PUBLISH CONTROL SECTION TOOLBAR */}
-                  <div className="bg-[#002244] border border-[#003873] rounded-2xl p-3 sm:p-5 shadow-xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 shrink-0">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#003366] border border-[#007BC4]/40 flex items-center justify-center text-[#7DC242] shrink-0 shadow-inner">
-                        <Save className="w-5 h-5 text-[#7DC242]" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-sm font-black text-white">Save & Publish Console Edits</h4>
-                          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-[#7DC242]/20 text-[#7DC242] border border-[#7DC242]/40">
-                            Decap CMS Active
-                          </span>
-                        </div>
-                        <p className="text-xs text-sky-200/80 mt-0.5">
-                          Draft changes are stored in this browser. Export JSON and update the repository to publish for all visitors.
-                        </p>
-                      </div>
-                    </div>
+                  <PublishToolbar onReview={() => setActiveTab('publishing')} />
 
-                    <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2.5 w-full sm:w-auto sm:justify-end">
-                      <button
-                        type="button"
-                        onClick={() => triggerSaveStatus("Changes saved as a draft in this browser. Export JSON to publish through the repository.")}
-                        className="px-5 py-2.5 bg-[#003366] hover:bg-[#00264d] text-white font-black text-xs rounded-xl transition-all cursor-pointer shadow-lg border border-[#007BC4]/50 flex items-center gap-2"
-                      >
-                        <CheckCircle2 className="w-4 h-4 text-[#7DC242]" />
-                        <span>Save & Save Local Draft</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => triggerSaveStatus("✓ Draft saved in local session memory.")}
-                        className="px-3.5 py-2.5 bg-[#001830] hover:bg-[#002244] text-sky-100 text-xs font-bold rounded-xl transition-all cursor-pointer border border-[#003873] flex items-center gap-1.5"
-                      >
-                        <Save className="w-3.5 h-3.5 text-sky-300" />
-                        <span>Save Draft</span>
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={exportContentJson}
-                        className="px-3.5 py-2.5 bg-[#007BC4] hover:bg-[#00629c] text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-md flex items-center gap-1.5 border border-sky-300/30"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Export JSON</span>
-                      </button>
-                    </div>
-                  </div>
-                  
                   {/* TAB 1: DASHBOARD OVERVIEW */}
                   {activeTab === 'dashboard' && (
                     <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
@@ -926,12 +862,12 @@ export const AdminPanel: React.FC = () => {
 
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={handleSimulateGitDeploy}
-                            disabled={isSimulatingDeploy}
+                            onClick={() => setActiveTab('publishing')}
+                            
                             className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-md"
                           >
                             <GitBranch className="w-4 h-4" />
-                            <span>{isSimulatingDeploy ? 'Deploying...' : 'Publishing Instructions'}</span>
+                            <span>Review & Publish</span>
                           </button>
                         </div>
                       </div>
@@ -2214,7 +2150,7 @@ export const AdminPanel: React.FC = () => {
                           <span>Administrators & Permissions</span>
                         </h3>
                         <p className="text-xs text-slate-400 mt-1">
-                          Manage user accounts with authorization to edit CMS content.
+                          Reference list only. All editors sign in with the shared administrator password; this list does not grant access.
                         </p>
                       </div>
 
@@ -2316,28 +2252,7 @@ export const AdminPanel: React.FC = () => {
                   )}
 
                   {/* PUBLISHING & REVISION HISTORY */}
-                  {activeTab === 'publishing' && (
-                    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                      <div>
-                        <h3 className="text-lg font-bold text-white flex items-center gap-2"><History className="w-5 h-5 text-[#7DC242]" /> Publishing & Revision History</h3>
-                        <p className="text-xs text-slate-400 mt-1">Create drafts, capture publish checkpoints and restore earlier template versions.</p>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        <button onClick={() => createRevision('Draft')} className="p-4 bg-slate-800 hover:bg-slate-700 rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2"><Save className="w-4 h-4" /> Save Draft Revision</button>
-                        <button onClick={() => createRevision('Published')} className="p-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2"><UploadCloud className="w-4 h-4" /> Publish Checkpoint</button>
-                        <button onClick={exportContentJson} className="p-4 bg-[#007BC4] hover:bg-[#00629c] rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2"><Download className="w-4 h-4" /> Export Backup</button>
-                      </div>
-                      <div className="space-y-3">
-                        {readRevisions().length === 0 ? <div className="p-8 text-center bg-slate-950/50 border border-slate-800 rounded-2xl text-xs text-slate-400">No revisions saved yet.</div> : readRevisions().map((revision: any) => (
-                          <div key={revision.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-950/50 border border-slate-800 rounded-2xl p-4">
-                            <div><strong className="text-sm text-white">{revision.status}</strong><span className="block text-[11px] text-slate-400 mt-1">{revision.date}</span></div>
-                            <button onClick={() => { updateContent(revision.snapshot); triggerSaveStatus('Revision restored.'); }} className="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-bold text-white">Restore This Version</button>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-[11px] text-sky-200 bg-sky-950/40 border border-sky-800/50 rounded-xl p-3">These revisions are stored on this device. Automatic public deployment and multi-user history become available after connecting an online CMS.</p>
-                    </motion.div>
-                  )}
+                  {activeTab === 'publishing' && <PublishingWorkspace />}
 
                   {/* TEMPLATE & APPEARANCE */}
                   {activeTab === 'appearance' && (
@@ -2355,7 +2270,7 @@ export const AdminPanel: React.FC = () => {
                       <div className="bg-slate-950/50 border border-slate-800 rounded-2xl p-5 space-y-5">
                         <div>
                           <h4 className="text-xs font-bold text-[#7DC242] uppercase tracking-wider">Interface Template</h4>
-                          <p className="text-[11px] text-slate-400 mt-1">Changes appear instantly on the public website.</p>
+                          <p className="text-[11px] text-slate-400 mt-1">Preview changes here, then publish to update the public website.</p>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                           {[
@@ -2446,7 +2361,7 @@ export const AdminPanel: React.FC = () => {
                       <div className="rounded-2xl border border-sky-800/60 bg-sky-950/40 p-5">
                         <h4 className="text-sm font-bold text-white">What “100% template editing” includes</h4>
                         <p className="text-xs text-slate-300 leading-relaxed mt-2">
-                          Page text, banners, photos, programmes, packages, articles, testimonials, contact details, SEO, branding and appearance are editable here. For edits to publish automatically for every visitor and every device, connect this console to an online CMS and secure media storage.
+                          Page text, banners, photos, programmes, packages, articles, testimonials, contact details, SEO, branding and appearance are editable here. Use Review & Publish to save your edits to the live website for every visitor.
                         </p>
                       </div>
                     </motion.div>
@@ -2522,9 +2437,9 @@ export const AdminPanel: React.FC = () => {
         {/* BOTTOM FOOTER STATUS */}
         <div className="px-4 py-2 bg-[#111827] border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center text-[10px] text-slate-400 gap-2 shrink-0">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-300">Decap CMS / WordPress-Style Engine</span>
+            <span className="font-bold text-slate-300">PID Website Editor</span>
             <span>•</span>
-            <span>JSON Template Mode</span>
+            <span>Live publishing connected</span>
           </div>
 
           <div className="flex items-center gap-3">

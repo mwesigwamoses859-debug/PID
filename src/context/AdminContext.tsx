@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import siteContentDefault from '../config/siteContent.json';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { DEFAULT_CONTENT } from '../config/defaultContent';
+import { publicContent, changedSections, uploadEmbeddedImages } from '../lib/publishing';
 
 export interface ServiceItem {
   id: string;
@@ -275,122 +276,6 @@ export interface WebContent {
   };
 }
 
-const DEFAULT_FULL_SCHEMA = siteContentDefault as unknown as FullSiteSchema;
-
-const DEFAULT_CONTENT: WebContent = {
-  fontSizePercent: DEFAULT_FULL_SCHEMA.siteSettings.fontSizePercent || 100,
-  theme: DEFAULT_FULL_SCHEMA.siteSettings.theme || 'olive',
-  uiStyle: DEFAULT_FULL_SCHEMA.siteSettings.uiStyle || 'macos',
-  glassIntensity: DEFAULT_FULL_SCHEMA.siteSettings.glassIntensity ?? 20,
-  cornerRadius: DEFAULT_FULL_SCHEMA.siteSettings.cornerRadius ?? 22,
-  reduceMotion: DEFAULT_FULL_SCHEMA.siteSettings.reduceMotion ?? false,
-  siteTitle: DEFAULT_FULL_SCHEMA.siteSettings.siteTitle,
-  siteTagline: DEFAULT_FULL_SCHEMA.siteSettings.siteTagline,
-  siteLogoUrl: DEFAULT_FULL_SCHEMA.siteSettings.siteLogoUrl || '/branding/pid-logo.webp',
-  announcementText: DEFAULT_FULL_SCHEMA.siteSettings.announcementText,
-
-  heroTitle1: DEFAULT_FULL_SCHEMA.pageHero.heroTitle1,
-  heroTitle2: DEFAULT_FULL_SCHEMA.pageHero.heroTitle2,
-  heroDescription: DEFAULT_FULL_SCHEMA.pageHero.heroDescription,
-  heroImage: DEFAULT_FULL_SCHEMA.pageHero.heroImage,
-  heroCtaPrimary: DEFAULT_FULL_SCHEMA.pageHero.heroCtaPrimary,
-  heroCtaSecondary: DEFAULT_FULL_SCHEMA.pageHero.heroCtaSecondary,
-
-  aboutHeaderBgImage: DEFAULT_FULL_SCHEMA.pageAbout.aboutHeaderBgImage,
-  aboutTagline: DEFAULT_FULL_SCHEMA.pageAbout.aboutTagline,
-  aboutTitle: DEFAULT_FULL_SCHEMA.pageAbout.aboutTitle,
-  aboutParagraph1: DEFAULT_FULL_SCHEMA.pageAbout.aboutParagraph1,
-  aboutParagraph2: DEFAULT_FULL_SCHEMA.pageAbout.aboutParagraph2,
-  aboutMissionText: DEFAULT_FULL_SCHEMA.pageAbout.aboutMissionText,
-  aboutVisionText: DEFAULT_FULL_SCHEMA.pageAbout.aboutVisionText,
-
-  pillarsHeaderBgImage: DEFAULT_FULL_SCHEMA.pagePillars.pillarsHeaderBgImage,
-  pillarsTagline: DEFAULT_FULL_SCHEMA.pagePillars.pillarsTagline,
-  pillarsTitle: DEFAULT_FULL_SCHEMA.pagePillars.pillarsTitle,
-  pillarsSubtitle: DEFAULT_FULL_SCHEMA.pagePillars.pillarsSubtitle,
-
-  impactHeaderBgImage: DEFAULT_FULL_SCHEMA.pageImpact.impactHeaderBgImage,
-  impactTagline: DEFAULT_FULL_SCHEMA.pageImpact.impactTagline,
-  impactTitle: DEFAULT_FULL_SCHEMA.pageImpact.impactTitle,
-  impactSubtitle: DEFAULT_FULL_SCHEMA.pageImpact.impactSubtitle,
-
-  partnersHeaderBgImage: DEFAULT_FULL_SCHEMA.pagePartners.partnersHeaderBgImage,
-  partnersTagline: DEFAULT_FULL_SCHEMA.pagePartners.partnersTagline,
-  partnersTitle: DEFAULT_FULL_SCHEMA.pagePartners.partnersTitle,
-  partnersSubtitle: DEFAULT_FULL_SCHEMA.pagePartners.partnersSubtitle,
-
-  opportunitiesHeaderBgImage: DEFAULT_FULL_SCHEMA.pageOpportunities.opportunitiesHeaderBgImage,
-  opportunitiesTagline: DEFAULT_FULL_SCHEMA.pageOpportunities.opportunitiesTagline,
-  opportunitiesTitle: DEFAULT_FULL_SCHEMA.pageOpportunities.opportunitiesTitle,
-  opportunitiesSubtitle: DEFAULT_FULL_SCHEMA.pageOpportunities.opportunitiesSubtitle,
-
-  contactHeaderBgImage: DEFAULT_FULL_SCHEMA.contactInfo.contactHeaderBgImage,
-  contactTagline: DEFAULT_FULL_SCHEMA.contactInfo.contactTagline,
-  contactTitle: DEFAULT_FULL_SCHEMA.contactInfo.contactTitle,
-  contactAddress: DEFAULT_FULL_SCHEMA.contactInfo.contactAddress,
-  contactEmail: DEFAULT_FULL_SCHEMA.contactInfo.contactEmail,
-  contactPhone: DEFAULT_FULL_SCHEMA.contactInfo.contactPhone,
-  contactHours: DEFAULT_FULL_SCHEMA.contactInfo.contactHours,
-
-  galleryImages: DEFAULT_FULL_SCHEMA.galleryImages,
-  services: DEFAULT_FULL_SCHEMA.services,
-  packages: DEFAULT_FULL_SCHEMA.packages,
-  blogPosts: DEFAULT_FULL_SCHEMA.blogPosts,
-  testimonials: DEFAULT_FULL_SCHEMA.testimonials,
-  administrators: DEFAULT_FULL_SCHEMA.administrators,
-  seoSettings: DEFAULT_FULL_SCHEMA.seoSettings,
-  decapBranch: DEFAULT_FULL_SCHEMA.siteSettings.decapBranch,
-  decapRepo: DEFAULT_FULL_SCHEMA.siteSettings.decapRepo,
-  navigationItems: [
-    { id: 'home', label: 'Home', visible: true },
-    { id: 'about', label: 'About Us', visible: true },
-    { id: 'strategy', label: 'Our Programs', visible: true },
-    { id: 'impact', label: 'Expected Impact', visible: true },
-    { id: 'partners', label: 'Our Partners', visible: true },
-    { id: 'opportunities', label: 'Opportunities', visible: true },
-    { id: 'gallery', label: 'Gallery', visible: true },
-    { id: 'contact', label: 'Contact Us', visible: true },
-  ],
-  partners: [
-    { id: 'uka', name: 'Uganda Korfball Association', shortName: 'UKA', logo: '/logos/uganda-korfball-association.jpg', website: '', visible: true },
-    { id: 'us4dn', name: 'Uganda Sports for Development Network', shortName: 'US4DN', logo: '/logos/us4dn.png', website: '', visible: true },
-    { id: 'ngo-bureau', name: 'National Bureau for NGOs', shortName: 'NGO Bureau', logo: '/logos/national-bureau-for-ngos.jpg', website: '', visible: true },
-    { id: 'mglsd', name: 'Ministry of Gender, Labour and Social Development', shortName: 'MGLSD', logo: '', website: '', visible: true },
-    { id: 'kcca', name: 'Kampala Capital City Authority', shortName: 'KCCA', logo: '/logos/kcca.png', website: '', visible: true },
-  ],
-  homeCards: [
-    { id: 'home-about', title: 'Who We Are', description: 'Discover our decade-long mission, our commitment to children and women empowerment, and our foundational values.', action: 'View Narrative', image: '/images/ad4-197.jpg', target: 'about', visible: true },
-    { id: 'home-programs', title: 'Our Intervention Programs', description: 'Explore our practical solution models, ranging from sports education to smart climate farming and community clinics.', action: 'View Programs', image: '/images/mtn-sos-149.jpg', target: 'strategy', visible: true },
-    { id: 'home-involved', title: 'Get Involved', description: 'Join our team as an active volunteer, apply for an educational internship, or support our community programs.', action: 'View Opportunities', image: '/images/spd-69.jpg', target: 'opportunities', visible: true },
-  ],
-  footerSettings: {
-    description: 'Empowering communities across Uganda through sports development, educational scholarships, environmental sustainability, and youth leadership.',
-    exploreTitle: 'Explore Website',
-    newsletterTitle: 'Stay Connected & Portal',
-    newsletterText: 'Subscribe to receive official programme updates and impact digests.',
-    copyrightText: 'Plan Integral Development (PID) Uganda. All rights reserved.',
-    backgroundImage: '/images/mtn-sos-151.jpg',
-  },
-  donationSettings: {
-    currency: 'UGX',
-    campaignTitle: 'Support Our Mission',
-    goal: 50000000,
-    suggestedAmounts: [25000, 50000, 100000, 250000],
-    mobileMoney: '+256 776 526 344',
-    bankDetails: 'Contact the PID Secretariat for official bank transfer instructions.',
-  },
-  siteFeatures: {
-    language: 'English',
-    maintenanceMode: false,
-    cookieNotice: true,
-    searchEnabled: true,
-    analyticsId: '',
-    facebookUrl: '',
-    instagramUrl: '',
-    youtubeUrl: '',
-  },
-};
-
 const THEME_VARIABLES = {
   olive: {
     '--color-natural-bg': '#FFFFFF',
@@ -462,6 +347,18 @@ interface AdminContextProps {
   exportContentJson: () => void;
   importContentJson: (jsonString: string) => boolean;
   generateDecapConfigYml: () => string;
+  liveRevision: number;
+  draftRevision: number;
+  publishingReady: boolean;
+  isPublishing: boolean;
+  publishingMessage: string;
+  unpublishedSections: string[];
+  history: { revision: number; label: string; actor: string; createdAt: string; restoredFrom: number | null }[];
+  publishContent: (actor: string, label: string, restoreRevision?: number) => Promise<boolean>;
+  refreshPublishing: () => Promise<void>;
+  loadRevisionDraft: (revision: number) => Promise<void>;
+  discardDraft: () => void;
+
 }
 
 const AdminContext = createContext<AdminContextProps | undefined>(undefined);
@@ -471,41 +368,73 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
-  // Load from LocalStorage on mount
-  useEffect(() => {
+  const [liveContent, setLiveContent] = useState<WebContent>(DEFAULT_CONTENT);
+  const [liveRevision, setLiveRevision] = useState(0);
+  const [draftRevision, setDraftRevision] = useState(0);
+  const [publishingReady, setPublishingReady] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [publishingMessage, setPublishingMessage] = useState('');
+  const [history, setHistory] = useState<AdminContextProps['history']>([]);
+  const liveRef = useRef<WebContent>(DEFAULT_CONTENT);
+  const authorizedRef = useRef(false);
+  const operationRef = useRef({ signature: '', id: '' });
+  const publishingRef = useRef(false);
+  const unpublishedSections = isAuthorized ? changedSections(content, liveContent) : [];
+
+  const applyLive = (data: any) => {
+    const next = { ...DEFAULT_CONTENT, ...data.content } as WebContent;
+    liveRef.current = next;
+    setLiveContent(next);
+    setLiveRevision(data.revision);
+    setPublishingReady(data.ready !== false);
+    if (Array.isArray(data.history)) setHistory(data.history);
+    if (!authorizedRef.current) setContent(next);
+    return next;
+  };
+
+  const refreshPublishing = async () => {
     try {
-      const saved = localStorage.getItem('pid_website_content');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        const savedServices = Array.isArray(parsed.services) ? parsed.services : [];
-        const mergedServices = [
-          ...DEFAULT_CONTENT.services.map((defaultService) =>
-            savedServices.find((service: ServiceItem) => service.id === defaultService.id) || defaultService
-          ),
-          ...savedServices.filter(
-            (service: ServiceItem) =>
-              !DEFAULT_CONTENT.services.some((defaultService) => defaultService.id === service.id)
-          ),
-        ];
-        setContent({
-          ...DEFAULT_CONTENT,
-          ...parsed,
-          siteLogoUrl: parsed.siteLogoUrl || DEFAULT_CONTENT.siteLogoUrl,
-          galleryImages: parsed.galleryImages || DEFAULT_CONTENT.galleryImages,
-          services: mergedServices,
-          packages: parsed.packages || DEFAULT_CONTENT.packages,
-          blogPosts: parsed.blogPosts || DEFAULT_CONTENT.blogPosts,
-          testimonials: parsed.testimonials || DEFAULT_CONTENT.testimonials,
-          administrators: parsed.administrators || DEFAULT_CONTENT.administrators,
-          seoSettings: parsed.seoSettings || DEFAULT_CONTENT.seoSettings,
-        });
-      }
-      
-      sessionStorage.removeItem('pid_admin_authorized');
-    } catch (e) {
-      console.error('Failed to load local storage state:', e);
-    }
+      const response = await fetch('/api/admin/content', { cache: 'no-store', credentials: 'same-origin' });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Could not load publishing status.');
+      applyLive(data);
+    } catch (error) { setPublishingMessage(error instanceof Error ? error.message : 'Could not load publishing status.'); }
+  };
+
+  useEffect(() => {
+    let active = true;
+    const loadPublic = async () => {
+      if (authorizedRef.current) return;
+      try {
+        const response = await fetch('/api/content', { cache: 'no-store' });
+        if (!response.ok) return;
+        const data = await response.json();
+        if (active && !authorizedRef.current && data.content) applyLive(data);
+      } catch { /* Keep the bundled website available when the connection is interrupted. */ }
+    };
+    void loadPublic();
+    const onFocus = () => { void loadPublic(); };
+    window.addEventListener('focus', onFocus);
+    return () => { active = false; window.removeEventListener('focus', onFocus); };
   }, []);
+
+  // Drafts never replace published content for signed-out visitors.
+  useEffect(() => {
+    if (!isAuthorized) return;
+    const timer = window.setTimeout(() => {
+      try {
+        localStorage.setItem('pid_draft_v2', JSON.stringify({ content, baseRevision: draftRevision }));
+      } catch { setPublishingMessage('Draft storage is full. Export a backup or publish before leaving this page.'); }
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [content, draftRevision, isAuthorized]);
+
+  useEffect(() => {
+    if (!isAuthorized || unpublishedSections.length === 0) return;
+    const beforeLeave = (event: BeforeUnloadEvent) => { event.preventDefault(); };
+    window.addEventListener('beforeunload', beforeLeave);
+    return () => window.removeEventListener('beforeunload', beforeLeave);
+  }, [isAuthorized, unpublishedSections.length]);
 
   // Update HTML font-size whenever percent changes
   useEffect(() => {
@@ -558,44 +487,96 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [content.seoSettings, content.siteTitle, content.siteTagline]);
 
   const updateContent = (newContent: Partial<WebContent>) => {
-    setContent((prev) => {
-      const updated = { ...prev, ...newContent };
-      localStorage.setItem('pid_website_content', JSON.stringify(updated));
-      return updated;
-    });
+    if (!isAuthorized || publishingRef.current) return;
+    setContent(prev => ({ ...prev, ...newContent }));
   };
 
   const resetToDefault = () => {
-    if (window.confirm('Are you sure you want to restore original default JSON template values? All edits will be reset.')) {
-      setContent(DEFAULT_CONTENT);
-      localStorage.removeItem('pid_website_content');
-    }
+    if (isAuthorized && !isPublishing && window.confirm('Replace your draft with the original website content? The live site stays unchanged until you publish.')) setContent(DEFAULT_CONTENT);
   };
 
   const login = async (password: string): Promise<boolean> => {
-    setIsAuthorized(false);
     try {
       const response = await fetch('/api/admin/session', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-        cache: 'no-store',
+        method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }), cache: 'no-store',
       });
-      if (!response.ok) return false;
-      const result = await response.json();
-      const authorized = result.authenticated === true;
-      setIsAuthorized(authorized);
-      return authorized;
-    } catch {
-      return false;
-    }
+      if (!response.ok || (await response.json()).authenticated !== true) return false;
+      authorizedRef.current = true;
+      const savedDraft = localStorage.getItem('pid_draft_v2');
+      const legacyDraft = localStorage.getItem('pid_website_content');
+      let next = liveRef.current;
+      let revision = liveRevision;
+      try {
+        const status = await fetch('/api/admin/content', { cache: 'no-store', credentials: 'same-origin' });
+        const data = await status.json();
+        if (status.ok) { next = applyLive(data); revision = data.revision; }
+        else setPublishingMessage(data.error || 'Publishing is not available yet.');
+      } catch { setPublishingMessage('Could not check publishing status. Your local draft is still available.'); }
+      try {
+        const saved = savedDraft;
+        const legacy = legacyDraft;
+        if (saved) {
+          const draft = JSON.parse(saved);
+          setContent({ ...next, ...draft.content });
+          setDraftRevision(Number.isSafeInteger(draft.baseRevision) ? draft.baseRevision : 0);
+        } else if (legacy) {
+          setContent({ ...next, ...JSON.parse(legacy) });
+          setDraftRevision(0);
+        } else { setContent(next); setDraftRevision(revision); }
+      } catch { setContent(next); setDraftRevision(revision); }
+      setIsAuthorized(true);
+      return true;
+    } catch { authorizedRef.current = false; return false; }
   };
 
   const logout = () => {
+    try { localStorage.setItem('pid_draft_v2', JSON.stringify({ content, baseRevision: draftRevision })); } catch {}
+    authorizedRef.current = false;
     setIsAuthorized(false);
-    sessionStorage.removeItem('pid_admin_authorized');
+    setContent(liveRef.current);
     void fetch('/api/admin/session', { method: 'DELETE', credentials: 'same-origin' }).catch(() => {});
+  };
+
+  const discardDraft = () => {
+    if (!isAuthorized || publishingRef.current) return;
+    setContent(liveRef.current); setDraftRevision(liveRevision); setPublishingMessage('Latest live version loaded into your draft.');
+    try { localStorage.removeItem('pid_website_content'); localStorage.setItem('pid_draft_v2', JSON.stringify({ content: liveRef.current, baseRevision: liveRevision })); } catch {}
+  };
+
+  const loadRevisionDraft = async (revision: number) => {
+    if (!isAuthorized || publishingRef.current) return;
+    try {
+    const response = await fetch(`/api/admin/content?revision=${revision}`, { cache: 'no-store', credentials: 'same-origin' });
+    const data = await response.json();
+    if (!response.ok) { setPublishingMessage(data.error || 'Could not load this version.'); return; }
+    setContent({ ...DEFAULT_CONTENT, ...data.content }); setDraftRevision(liveRevision);
+    setPublishingMessage(`Version ${revision} loaded for preview. Publish to make it live.`);
+    } catch { setPublishingMessage('Could not load that version. Please check your connection.'); }
+  };
+
+  const publishContent = async (actor: string, label: string, restoreRevision?: number) => {
+    if (!isAuthorized || publishingRef.current) return false;
+    publishingRef.current = true;
+    setIsPublishing(true); setPublishingMessage('Saving your website update…');
+    try {
+      const next = restoreRevision === undefined ? await uploadEmbeddedImages(publicContent(content)) : undefined;
+      const payload = { expectedRevision: draftRevision, content: next, actor, label, ...(restoreRevision === undefined ? {} : { restoreRevision }) };
+      const signature = JSON.stringify(payload);
+      if (operationRef.current.signature !== signature) operationRef.current = { signature, id: crypto.randomUUID() };
+      const response = await fetch('/api/admin/content', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...payload, operationId: operationRef.current.id }) });
+      const data = await response.json();
+      if (!response.ok) { if (response.status === 409) await refreshPublishing(); throw new Error(data.error || 'Publishing failed. Your draft is saved.'); }
+      const latestResponse = await fetch('/api/admin/content', { cache: 'no-store', credentials: 'same-origin' });
+      if (!latestResponse.ok) throw new Error('The update was saved. Refresh publishing status to confirm the live version.');
+      const latest = await latestResponse.json();
+      const published = applyLive(latest);
+      setContent(published); setDraftRevision(latest.revision);
+      try { localStorage.setItem('pid_draft_v2', JSON.stringify({ content: published, baseRevision: latest.revision })); localStorage.removeItem('pid_website_content'); } catch {}
+      operationRef.current = { signature: '', id: '' };
+      setPublishingMessage(`Published successfully. Live website version ${data.revision} is available to everyone.`);
+      return true;
+    } catch (error) { setPublishingMessage(error instanceof Error ? error.message : 'Could not publish. Your draft is saved.'); return false; }
+    finally { publishingRef.current = false; setIsPublishing(false); }
   };
 
   // Recheck the server session while the editor is open; never trust browser storage.
@@ -604,8 +585,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const checkSession = async () => {
       try {
         const response = await fetch('/api/admin/session', { cache: 'no-store', credentials: 'same-origin' });
-        if (!response.ok || (await response.json()).authenticated !== true) setIsAuthorized(false);
-      } catch { setIsAuthorized(false); }
+        if (!response.ok || (await response.json()).authenticated !== true) { authorizedRef.current = false; setIsAuthorized(false); setContent(liveRef.current); }
+      } catch { /* A temporary connection failure must not erase an editing session. */ }
     };
     const timer = window.setInterval(checkSession, 60000);
     return () => window.clearInterval(timer);
@@ -687,6 +668,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Import JSON content string
   const importContentJson = (jsonString: string): boolean => {
     try {
+      if (!isAuthorized) return false;
       const parsed = JSON.parse(jsonString);
       if (parsed.siteSettings) {
         const importedContent: WebContent = {
@@ -747,7 +729,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         };
 
         setContent(importedContent);
-        localStorage.setItem('pid_website_content', JSON.stringify(importedContent));
         return true;
       }
       return false;
@@ -801,7 +782,9 @@ collections:
         logout,
         exportContentJson,
         importContentJson,
-        generateDecapConfigYml
+        generateDecapConfigYml,
+        liveRevision, draftRevision, publishingReady, isPublishing, publishingMessage, unpublishedSections,
+        history, publishContent, refreshPublishing, loadRevisionDraft, discardDraft
       }}
     >
       {children}

@@ -20,7 +20,7 @@ import { AdminProvider, useAdmin } from './context/AdminContext';
 import { AdminPanel } from './components/AdminPanel';
 
 function AppContent() {
-  const { content, setIsAdminOpen } = useAdmin();
+  const { content, setIsAdminOpen, isAdminOpen, isAuthorized, unpublishedSections } = useAdmin();
   const validSections = ['home', 'about', 'strategy', 'impact', 'partners', 'gallery', 'opportunities', 'contact', 'admin'];
 
   const [activeSection, setActiveSection] = useState(() => {
@@ -212,6 +212,7 @@ function AppContent() {
 
   return (
     <div className="website-shell min-h-screen bg-natural-bg text-natural-text font-sans antialiased selection:bg-natural-tan/20 selection:text-natural-dark flex flex-col">
+      {isAuthorized && !isAdminOpen && <div className="fixed bottom-5 left-4 right-4 z-[80] mx-auto max-w-3xl rounded-2xl bg-[#003366] text-white border border-sky-500 p-4 shadow-2xl flex items-center justify-between gap-4"><p className="text-sm"><strong>Administrator preview</strong><span className="block text-xs text-sky-200 mt-1">{unpublishedSections.length ? 'Unpublished changes are visible only to you.' : 'Your draft matches the live website.'}</span></p><button onClick={() => setIsAdminOpen(true)} className="rounded-xl px-4 py-2 bg-[#7DC242] text-[#003366] font-bold text-xs">Return to Editor</button></div>}
       {/* Navigation Header */}
       <Navbar activeSection={activeSection} setActiveSection={handleSectionChange} />
 
@@ -258,3 +259,4 @@ export default function App() {
     </AdminProvider>
   );
 }
+
