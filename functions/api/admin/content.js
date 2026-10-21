@@ -29,7 +29,7 @@ export async function onRequest({ request, env }) {
       if (!Number.isSafeInteger(body.restoreRevision) || body.restoreRevision < 0) return json({ error: 'Invalid restore revision.' }, 400);
       const row = await db.prepare('SELECT content FROM cms_revisions WHERE revision = ?').bind(body.restoreRevision).first();
       if (!row) return json({ error: 'Revision not found.' }, 404);
-      content = JSON.parse(row.content); restoredFrom = body.restoreRevision;
+      content = validateContent(JSON.parse(row.content)); restoredFrom = body.restoreRevision;
     } else {
       try { content = validateContent(body.content); } catch (error) { return json({ error: error.message }, 400); }
     }

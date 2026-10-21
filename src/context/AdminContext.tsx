@@ -5,6 +5,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { DEFAULT_CONTENT } from '../config/defaultContent';
+import { FONT_OPTIONS, BACKGROUNDS, normalizeDesign, fontCss, designLanguage, type DesignSettings } from '../config/design';
 import { publicContent, changedSections, uploadEmbeddedImages } from '../lib/publishing';
 
 export interface ServiceItem {
@@ -165,6 +166,7 @@ export interface FullSiteSchema {
 }
 
 export interface WebContent {
+  designSettings: DesignSettings;
   fontSizePercent: number;
   theme: 'olive' | 'noir' | 'blue' | 'earth';
   uiStyle: 'classic' | 'macos' | 'android16';
@@ -382,7 +384,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const unpublishedSections = isAuthorized ? changedSections(content, liveContent) : [];
 
   const applyLive = (data: any) => {
-    const next = { ...DEFAULT_CONTENT, ...data.content } as WebContent;
+    const next = { ...DEFAULT_CONTENT, ...data.content, designSettings: normalizeDesign(data.content?.designSettings) } as WebContent;
     liveRef.current = next;
     setLiveContent(next);
     setLiveRevision(data.revision);
@@ -436,11 +438,10 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => window.removeEventListener('beforeunload', beforeLeave);
   }, [isAuthorized, unpublishedSections.length]);
 
-  // Update HTML font-size whenever percent changes
+  // Public typography stays independent of the editor's controls.
   useEffect(() => {
-    if (content.fontSizePercent) {
-      document.documentElement.style.fontSize = `${content.fontSizePercent}%`;
-    }
+    document.documentElement.style.fontSize = '100%';
+    document.documentElement.style.setProperty('--site-type-scale', String((content.fontSizePercent || 100) / 100));
   }, [content.fontSizePercent]);
 
   // Update HTML CSS custom variables whenever theme changes
@@ -462,6 +463,36 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     root.style.setProperty('--ui-radius', `${content.cornerRadius ?? 22}px`);
     root.style.setProperty('--ui-blur', `${content.glassIntensity ?? 20}px`);
   }, [content.uiStyle, content.cornerRadius, content.glassIntensity, content.reduceMotion]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const settings = normalizeDesign(content.designSettings);
+    const language = designLanguage(content.siteFeatures.language);
+    root.lang = language.code;
+    root.dir = language.code === 'ar' ? 'rtl' : 'ltr';
+    root.dataset.backgroundTemplate = settings.backgroundTemplate;
+    root.dataset.backgroundCustom = String(settings.backgroundTemplate !== 'clean' || settings.backgroundColor.toUpperCase() !== '#FFFFFF');
+    root.dataset.buttonStyle = settings.buttonStyle;
+    root.dataset.stickyHeader = String(settings.stickyHeader);
+    root.dataset.smoothScroll = String(settings.smoothScroll && !content.reduceMotion);
+    root.style.setProperty('--site-body-font', fontCss(settings.bodyFont));
+    root.style.setProperty('--site-heading-font', fontCss(settings.headingFont));
+    root.style.setProperty('--site-heading-scale', String(settings.headingScale));
+    root.style.setProperty('--site-line-height', String(settings.lineHeight));
+    root.style.setProperty('--site-letter-spacing', `${settings.letterSpacing}px`);
+    root.style.setProperty('--site-content-width', ({ narrow: '64rem', standard: '80rem', wide: '96rem' })[settings.contentWidth] || '80rem');
+    root.style.setProperty('--site-section-scale', String(({ compact: 0.75, comfortable: 1, spacious: 1.3 })[settings.sectionSpacing] || 1));
+    root.style.setProperty('--site-section-space', ({ compact: '3rem', comfortable: '4rem', spacious: '6rem' })[settings.sectionSpacing] || '4rem');
+    root.style.setProperty('--site-background-color', /^#[a-f0-9]{6}$/i.test(settings.backgroundColor) ? settings.backgroundColor : '#FFFFFF');
+    const pattern = BACKGROUNDS.find(item => item.id === settings.backgroundTemplate);
+    const photo = settings.backgroundTemplate === 'photo' && /^(https:\/\/|\/(images|logos|branding|api\/media)\/)/.test(settings.backgroundImage) ? `linear-gradient(rgb(255 255 255 / ${1 - settings.backgroundStrength / 100}),rgb(255 255 255 / ${1 - settings.backgroundStrength / 100})),url(${JSON.stringify(settings.backgroundImage)})` : '';
+    root.style.setProperty('--site-background-image', photo || pattern?.css || 'none');
+    const families = [...new Set([settings.bodyFont, settings.headingFont])].map(id => FONT_OPTIONS.find(font => font.id === id)?.family).filter(Boolean);
+    let link = document.getElementById('pid-design-fonts') as HTMLLinkElement | null;
+    if (!families.length) { link?.remove(); return; }
+    if (!link) { link = document.createElement('link'); link.id = 'pid-design-fonts'; link.rel = 'stylesheet'; document.head.appendChild(link); }
+    link.href = 'https://fonts.googleapis.com/css2?' + families.map(family => `family=${encodeURIComponent(family!).replace(/%20/g, '+')}:wght@400;700`).join('&') + '&display=swap';
+  }, [content.designSettings, content.siteFeatures.language, content.reduceMotion]);
 
   // Dynamically update document title and head meta tags (SEO / OpenGraph)
   useEffect(() => {
@@ -517,10 +548,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const legacy = legacyDraft;
         if (saved) {
           const draft = JSON.parse(saved);
-          setContent({ ...next, ...draft.content });
+          setContent({ ...next, ...draft.content, designSettings: normalizeDesign(draft.content?.designSettings) });
           setDraftRevision(Number.isSafeInteger(draft.baseRevision) ? draft.baseRevision : 0);
         } else if (legacy) {
-          setContent({ ...next, ...JSON.parse(legacy) });
+          const legacyContent = JSON.parse(legacy);
+          setContent({ ...next, ...legacyContent, designSettings: normalizeDesign(legacyContent.designSettings) });
           setDraftRevision(0);
         } else { setContent(next); setDraftRevision(revision); }
       } catch { setContent(next); setDraftRevision(revision); }
@@ -549,7 +581,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const response = await fetch(`/api/admin/content?revision=${revision}`, { cache: 'no-store', credentials: 'same-origin' });
     const data = await response.json();
     if (!response.ok) { setPublishingMessage(data.error || 'Could not load this version.'); return; }
-    setContent({ ...DEFAULT_CONTENT, ...data.content }); setDraftRevision(liveRevision);
+    setContent({ ...DEFAULT_CONTENT, ...data.content, designSettings: normalizeDesign(data.content?.designSettings) }); setDraftRevision(liveRevision);
     setPublishingMessage(`Version ${revision} loaded for preview. Publish to make it live.`);
     } catch { setPublishingMessage('Could not load that version. Please check your connection.'); }
   };
@@ -601,6 +633,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         siteLogoUrl: content.siteLogoUrl,
         announcementText: content.announcementText,
         theme: content.theme,
+        designSettings: content.designSettings,
         fontSizePercent: content.fontSizePercent,
         uiStyle: content.uiStyle,
         glassIntensity: content.glassIntensity,
@@ -672,6 +705,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const parsed = JSON.parse(jsonString);
       if (parsed.siteSettings) {
         const importedContent: WebContent = {
+          designSettings: normalizeDesign(parsed.siteSettings.designSettings),
           fontSizePercent: parsed.siteSettings.fontSizePercent || 100,
           theme: parsed.siteSettings.theme || 'olive',
           uiStyle: parsed.siteSettings.uiStyle || content.uiStyle || 'macos',

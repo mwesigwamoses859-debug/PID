@@ -33,3 +33,9 @@ Sign in through Console, edit your draft, then use **Review & Publish → Publis
 Runtime settings in Cloudflare Pages production: private `ADMIN_PASSWORD` secret and `SITE_DB` D1 binding to `pid-live-content`. Keep these settings when redeploying. Do not place the password in public content or a `VITE_*` variable.
 
 Checks: `npm run lint`, `npm test`, and `npm run build`. Tests use Node's SQLite module and the actual publishing handlers.
+
+## Design Studio
+
+Use Console → Design Studio for nine heading/body font options, typography sizing and spacing, six style presets, seven background options (including an uploaded photograph), canvas colour, layout width, section spacing, button corners, navigation effects, back-to-top and reduced motion. Preview settings as a private draft; Review & Publish saves them for every visitor. Font presets load through Google Fonts with local fallback fonts.
+
+The content language selector sets language metadata and Arabic page direction. It does not translate written page content. Existing versions without design settings keep the original default design. Exported backups include the design settings.

@@ -129,3 +129,39 @@ test('uploaded image persists and is readable by signed-out visitors', async () 
   assert.equal(fetched.headers.get('Content-Type'), 'image/png'); assert.deepEqual(new Uint8Array(await fetched.arrayBuffer()), bytes);
   assert.equal((await (await upload({ request: req(), env })).json()).url, url);
 });
+
+test('older content without design settings gets safe defaults', () => {
+  const legacy = structuredClone(defaults); delete legacy.designSettings;
+  assert.deepEqual(validateContent(legacy).designSettings, defaults.designSettings);
+});
+test('every design preset passes publishing validation', async () => {
+  const { DESIGN_PRESETS } = await import('../src/config/design.ts');
+  for (const preset of DESIGN_PRESETS) {
+    const result = validateContent({ ...defaults, ...preset.patch, designSettings: preset.design });
+    assert.equal(result.designSettings.bodyFont, preset.design.bodyFont);
+  }
+});
+test('typography, background and layout survive publishing and restore', async () => {
+  const { env, cookie } = await setup();
+  const design = { ...defaults.designSettings, bodyFont: 'poppins', headingFont: 'georgia', headingScale: 1.15, lineHeight: 1.8, backgroundTemplate: 'dots', contentWidth: 'wide', buttonStyle: 'pill', backToTop: true };
+  assert.equal((await post(env, cookie, payload(0, { designSettings: design }))).status, 200);
+  assert.deepEqual((await read(env)).content.designSettings, design);
+  const response = await post(env, cookie, { expectedRevision: 1, operationId: crypto.randomUUID(), restoreRevision: 0 });
+  assert.equal(response.status, 200);
+  assert.deepEqual((await read(env)).content.designSettings, defaults.designSettings);
+});
+test('invalid font, background, injected colour and unsafe layout values cannot publish', () => {
+  for (const patch of [{ bodyFont: 'untrusted-font' }, { headingFont: 'url(evil)' }, { backgroundTemplate: 'raw-css' }, { backgroundColor: 'red; background:url(evil)' }, { backgroundImage: 'javascript:alert(1)' }, { lineHeight: 20 }, { headingScale: 0 }, { sectionSpacing: 'bad' }, { buttonStyle: 'script' }, { contentWidth: '99999px' }, { letterSpacing: -1 }, { stickyHeader: 'false' }]) {
+    assert.throws(() => validateContent({ ...defaults, designSettings: { ...defaults.designSettings, ...patch } }));
+  }
+});
+test('legacy revisions restore after an appearance update', async () => {
+  const { env, cookie } = await setup();
+  await initialize(env.SITE_DB);
+  const legacy = structuredClone(defaults); delete legacy.designSettings;
+  await env.SITE_DB.prepare('UPDATE cms_revisions SET content = ? WHERE revision = 0').bind(JSON.stringify(legacy)).run();
+  await post(env, cookie, payload(0, { designSettings: { ...defaults.designSettings, headingFont: 'merriweather' } }));
+  const response = await post(env, cookie, { expectedRevision: 1, operationId: crypto.randomUUID(), restoreRevision: 0 });
+  assert.equal(response.status, 200);
+  assert.deepEqual((await read(env)).content.designSettings, defaults.designSettings);
+});

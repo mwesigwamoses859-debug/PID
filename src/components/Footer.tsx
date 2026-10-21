@@ -38,7 +38,7 @@ export default function Footer({ setActiveSection }: FooterProps) {
   };
 
   return (
-    <footer className="relative bg-[#003366] text-white pt-16 pb-12 border-t border-[#004b93] font-sans overflow-hidden">
+    <footer id="public-footer" className="relative bg-[#003366] text-white pt-16 pb-12 border-t border-[#004b93] font-sans overflow-hidden">
       
       {/* BACKGROUND IMAGE LAYER WITH HIGH-CONTRAST DARK NAVY OVERLAY */}
       <div className="absolute inset-0 z-0">
@@ -196,3 +196,4 @@ export default function Footer({ setActiveSection }: FooterProps) {
     </footer>
   );
 }
+

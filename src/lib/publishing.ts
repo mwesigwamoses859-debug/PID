@@ -12,7 +12,7 @@ const sectionFor = (key: string) => {
   if (key.startsWith('opportunities')) return 'Opportunities';
   if (key.startsWith('contact')) return 'Contact';
   if (key.startsWith('partners') || key === 'partners') return 'Partners';
-  return ({ services: 'Programmes', packages: 'Packages', blogPosts: 'News articles', testimonials: 'Testimonials', galleryImages: 'Gallery', seoSettings: 'Search descriptions', navigationItems: 'Navigation', homeCards: 'Homepage cards', footerSettings: 'Footer', donationSettings: 'Donation information', siteFeatures: 'Website settings' } as Record<string, string>)[key] || 'Branding & appearance';
+  return ({ designSettings: 'Design & typography', services: 'Programmes', packages: 'Packages', blogPosts: 'News articles', testimonials: 'Testimonials', galleryImages: 'Gallery', seoSettings: 'Search descriptions', navigationItems: 'Navigation', homeCards: 'Homepage cards', footerSettings: 'Footer', donationSettings: 'Donation information', siteFeatures: 'Website settings' } as Record<string, string>)[key] || 'Branding & appearance';
 };
 export const changedSections = (draft: WebContent, live: WebContent) => [...new Set(Object.keys(publicContent(draft)).filter(key => JSON.stringify(draft[key as keyof WebContent]) !== JSON.stringify(live[key as keyof WebContent])).map(sectionFor))];
 

@@ -185,3 +185,54 @@ html[data-reduce-motion="true"] *::after {
 }
 
 
+
+/* Public design controls are scoped away from the administration console. */
+:is(#public-content, #navbar, #public-footer) {
+  --font-sans: var(--site-body-font, "Inter", sans-serif);
+  --text-xs: calc(.75rem * var(--site-type-scale, 1));
+  --text-sm: calc(.875rem * var(--site-type-scale, 1));
+  --text-base: calc(1rem * var(--site-type-scale, 1));
+  --text-lg: calc(1.125rem * var(--site-type-scale, 1));
+  --text-xl: calc(1.25rem * var(--site-type-scale, 1));
+  --text-2xl: calc(1.5rem * var(--site-type-scale, 1));
+  --text-3xl: calc(1.875rem * var(--site-type-scale, 1));
+  --text-4xl: calc(2.25rem * var(--site-type-scale, 1));
+  --text-5xl: calc(3rem * var(--site-type-scale, 1));
+  --text-6xl: calc(3.75rem * var(--site-type-scale, 1));
+  --text-7xl: calc(4.5rem * var(--site-type-scale, 1));
+  --text-8xl: calc(6rem * var(--site-type-scale, 1));
+  --text-9xl: calc(8rem * var(--site-type-scale, 1));
+  font-family: var(--site-body-font, "Inter", sans-serif);
+}
+:is(#public-content, #public-footer) :is(h1,h2,h3,h4,h5,h6) {
+  --text-xs: calc(.75rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-sm: calc(.875rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-base: calc(1rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-lg: calc(1.125rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-xl: calc(1.25rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-2xl: calc(1.5rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-3xl: calc(1.875rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-4xl: calc(2.25rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-5xl: calc(3rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-6xl: calc(3.75rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-7xl: calc(4.5rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-8xl: calc(6rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  --text-9xl: calc(8rem * var(--site-type-scale, 1) * var(--site-heading-scale, 1));
+  font-family: var(--site-heading-font, "Inter", sans-serif);
+}
+#public-content :is(p, li) { line-height: var(--site-line-height, 1.65); letter-spacing: var(--site-letter-spacing, 0px); }
+:is(#public-content, #navbar, #public-footer) .max-w-7xl { max-width: var(--site-content-width, 80rem); }
+:is(#public-content, #navbar, #public-footer) .max-w-6xl { max-width: min(72rem, var(--site-content-width, 80rem)); }
+#public-content section.py-16 { padding-block: calc(4rem * var(--site-section-scale, 1)); }
+#public-content section.py-20 { padding-block: calc(5rem * var(--site-section-scale, 1)); }
+#public-content section.py-24 { padding-block: calc(6rem * var(--site-section-scale, 1)); }
+#public-content { background-color: var(--site-background-color, #fff); background-image: var(--site-background-image, none); background-attachment: scroll; background-size: cover; }
+html[data-background-template="dots"] #public-content { background-size: 18px 18px; }
+html[data-background-template="grid"] #public-content { background-size: 32px 32px; }
+html[data-background-custom="true"] #public-content section:is(.bg-white,.bg-slate-50) { background-color: rgb(255 255 255 / 70%); }
+html[data-button-style="pill"] :is(#public-content, #navbar, #public-footer) button:not(.text-left) { border-radius: 999px !important; }
+html[data-button-style="soft"] :is(#public-content, #navbar, #public-footer) button:not(.text-left) { border-radius: 12px !important; }
+html[data-button-style="square"] :is(#public-content, #navbar, #public-footer) button:not(.text-left) { border-radius: 2px !important; }
+html[data-sticky-header="false"] #navbar { position: relative; }
+html[data-smooth-scroll="true"] { scroll-behavior: smooth; }
+#pid-admin-console { direction: ltr; font-family: "Inter", system-ui, sans-serif; letter-spacing: normal; }

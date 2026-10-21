@@ -7,6 +7,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAdmin, ServiceItem, PackageItem, BlogPostItem, TestimonialItem, AdministratorUser, GalleryImage } from '../context/AdminContext';
 import { Logo } from './Logo';
+import { DesignStudio } from './DesignStudio';
 import { PublishToolbar, PublishingWorkspace } from './PublishingWorkspace';
 import { uploadImageData } from '../lib/publishing';
 import { 
@@ -580,7 +581,7 @@ export const AdminPanel: React.FC = () => {
   if (!isAdminOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 bg-slate-950/85 backdrop-blur-md font-sans">
+    <div id="pid-admin-console" dir="ltr" lang="en" className="fixed inset-0 z-[100] flex items-center justify-center p-0 sm:p-4 bg-slate-950/85 backdrop-blur-md font-sans">
       <motion.div 
         initial={{ opacity: 0, scale: 0.96, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -780,7 +781,7 @@ export const AdminPanel: React.FC = () => {
                         { id: 'contact', label: 'Contact Information', icon: LinkIcon },
                         { id: 'seo', label: 'SEO Settings', icon: Search },
                         { id: 'admins', label: 'Administrators', icon: Shield },
-                        { id: 'appearance', label: 'Template & Appearance', icon: Palette },
+                        { id: 'appearance', label: 'Design Studio', icon: Palette },
                         { id: 'inbox', label: 'Forms & Messages Inbox', icon: MessageSquare },
                         { id: 'donations', label: 'Donation Manager', icon: CreditCard },
                         { id: 'publishing', label: 'Publishing & Revisions', icon: History },
@@ -2254,118 +2255,8 @@ export const AdminPanel: React.FC = () => {
                   {/* PUBLISHING & REVISION HISTORY */}
                   {activeTab === 'publishing' && <PublishingWorkspace />}
 
-                  {/* TEMPLATE & APPEARANCE */}
-                  {activeTab === 'appearance' && (
-                    <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
-                      <div>
-                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                          <Palette className="w-5 h-5 text-[#7DC242]" />
-                          <span>Template & Appearance Studio</span>
-                        </h3>
-                        <p className="text-xs text-slate-400 mt-1">
-                          Change the website interface, colour system, type scale, glass effect and corner style without coding.
-                        </p>
-                      </div>
-
-                      <div className="bg-slate-950/50 border border-slate-800 rounded-2xl p-5 space-y-5">
-                        <div>
-                          <h4 className="text-xs font-bold text-[#7DC242] uppercase tracking-wider">Interface Template</h4>
-                          <p className="text-[11px] text-slate-400 mt-1">Preview changes here, then publish to update the public website.</p>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                          {[
-                            { id: 'macos', title: 'macOS Glass', desc: 'Translucent navigation, soft depth and polished glass surfaces.', icon: Monitor },
-                            { id: 'android16', title: 'Android 16', desc: 'Material-style colour, large touch controls and expressive shapes.', icon: Smartphone },
-                            { id: 'classic', title: 'Classic NGO', desc: 'A simpler professional layout with restrained effects.', icon: Layout },
-                          ].map((style) => {
-                            const Icon = style.icon;
-                            const selected = content.uiStyle === style.id;
-                            return (
-                              <button
-                                key={style.id}
-                                type="button"
-                                onClick={() => handleTextChange('uiStyle', style.id)}
-                                className={`p-4 rounded-2xl border text-left transition-all ${
-                                  selected
-                                    ? 'bg-[#003366] border-[#7DC242] shadow-lg'
-                                    : 'bg-slate-900 border-slate-700 hover:border-[#007BC4]'
-                                }`}
-                              >
-                                <Icon className={`w-5 h-5 ${selected ? 'text-[#7DC242]' : 'text-sky-300'}`} />
-                                <span className="block text-sm font-bold text-white mt-3">{style.title}</span>
-                                <span className="block text-[11px] text-slate-400 mt-1 leading-relaxed">{style.desc}</span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                        <div className="bg-slate-950/50 border border-slate-800 rounded-2xl p-5 space-y-4">
-                          <h4 className="text-xs font-bold text-[#7DC242] uppercase tracking-wider">Brand Colour Preset</h4>
-                          <div className="grid grid-cols-2 gap-3">
-                            {[
-                              { id: 'olive', label: 'PID Blue & Green', colors: ['#003366', '#007BC4', '#7DC242'] },
-                              { id: 'blue', label: 'Ocean Blue', colors: ['#0F172A', '#1D4ED8', '#0EA5E9'] },
-                              { id: 'earth', label: 'Warm Earth', colors: ['#78350F', '#D97706', '#FDE68A'] },
-                              { id: 'noir', label: 'Night Mode', colors: ['#020617', '#38BDF8', '#4ADE80'] },
-                            ].map((theme) => (
-                              <button
-                                key={theme.id}
-                                type="button"
-                                onClick={() => handleTextChange('theme', theme.id)}
-                                className={`p-3 rounded-xl border text-left ${content.theme === theme.id ? 'border-[#7DC242] bg-slate-800' : 'border-slate-700 bg-slate-900'}`}
-                              >
-                                <span className="flex gap-1.5 mb-2">
-                                  {theme.colors.map((color) => <span key={color} className="w-5 h-5 rounded-full border border-white/20" style={{ backgroundColor: color }} />)}
-                                </span>
-                                <span className="text-[11px] font-bold text-white">{theme.label}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="bg-slate-950/50 border border-slate-800 rounded-2xl p-5 space-y-5">
-                          <h4 className="text-xs font-bold text-[#7DC242] uppercase tracking-wider">Shape & Accessibility</h4>
-                          <label className="block space-y-2">
-                            <span className="flex justify-between text-xs text-slate-300">
-                              <span>Corner roundness</span>
-                              <strong>{content.cornerRadius}px</strong>
-                            </span>
-                            <input type="range" min="8" max="36" value={content.cornerRadius} onChange={(e) => handleTextChange('cornerRadius', Number(e.target.value))} className="w-full accent-[#7DC242]" />
-                          </label>
-                          <label className="block space-y-2">
-                            <span className="flex justify-between text-xs text-slate-300">
-                              <span>Glass blur strength</span>
-                              <strong>{content.glassIntensity}px</strong>
-                            </span>
-                            <input type="range" min="0" max="36" value={content.glassIntensity} onChange={(e) => handleTextChange('glassIntensity', Number(e.target.value))} className="w-full accent-[#007BC4]" />
-                          </label>
-                          <label className="block space-y-2">
-                            <span className="flex justify-between text-xs text-slate-300">
-                              <span>Website text size</span>
-                              <strong>{content.fontSizePercent}%</strong>
-                            </span>
-                            <input type="range" min="85" max="120" value={content.fontSizePercent} onChange={(e) => handleTextChange('fontSizePercent', Number(e.target.value))} className="w-full accent-[#7DC242]" />
-                          </label>
-                          <label className="flex items-center justify-between rounded-xl bg-slate-900 border border-slate-700 p-3">
-                            <span>
-                              <span className="block text-xs font-bold text-white">Reduce animation</span>
-                              <span className="block text-[10px] text-slate-400 mt-0.5">Improves comfort and accessibility.</span>
-                            </span>
-                            <input type="checkbox" checked={content.reduceMotion} onChange={(e) => handleTextChange('reduceMotion', e.target.checked)} className="w-4 h-4 accent-[#7DC242]" />
-                          </label>
-                        </div>
-                      </div>
-
-                      <div className="rounded-2xl border border-sky-800/60 bg-sky-950/40 p-5">
-                        <h4 className="text-sm font-bold text-white">What “100% template editing” includes</h4>
-                        <p className="text-xs text-slate-300 leading-relaxed mt-2">
-                          Page text, banners, photos, programmes, packages, articles, testimonials, contact details, SEO, branding and appearance are editable here. Use Review & Publish to save your edits to the live website for every visitor.
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
+                  {/* DESIGN STUDIO */}
+                  {activeTab === 'appearance' && <DesignStudio renderBackgroundUpload={(value, onChange) => <ImageFieldWithUpload label="Website background photo" value={value} onChange={onChange} onNotify={triggerSaveStatus} />} />}
 
                   {/* DECAP / GIT SETTINGS & IMPORT/EXPORT */}
                   {activeTab === 'settings' && (

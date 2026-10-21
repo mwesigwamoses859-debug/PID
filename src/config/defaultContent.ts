@@ -1,9 +1,11 @@
 import siteContentDefault from './siteContent.json';
+import { DEFAULT_DESIGN } from './design';
 import type { FullSiteSchema, WebContent } from '../context/AdminContext';
 
 const DEFAULT_FULL_SCHEMA = siteContentDefault as unknown as FullSiteSchema;
 
 export const DEFAULT_CONTENT: WebContent = {
+  designSettings: { ...DEFAULT_DESIGN },
   fontSizePercent: DEFAULT_FULL_SCHEMA.siteSettings.fontSizePercent || 100,
   theme: DEFAULT_FULL_SCHEMA.siteSettings.theme || 'olive',
   uiStyle: DEFAULT_FULL_SCHEMA.siteSettings.uiStyle || 'macos',

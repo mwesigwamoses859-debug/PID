@@ -18,6 +18,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import { AdminProvider, useAdmin } from './context/AdminContext';
 import { AdminPanel } from './components/AdminPanel';
+import { BackToTop } from './components/BackToTop';
 
 function AppContent() {
   const { content, setIsAdminOpen, isAdminOpen, isAuthorized, unpublishedSections } = useAdmin();
@@ -217,7 +218,7 @@ function AppContent() {
       <Navbar activeSection={activeSection} setActiveSection={handleSectionChange} />
 
       {/* Main Routed Sections with smooth entry transition */}
-      <main className="flex-grow">
+      <main id="public-content" className="flex-grow">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSection}
@@ -234,6 +235,7 @@ function AppContent() {
       {/* Corporate directory Footer */}
       <Footer setActiveSection={handleSectionChange} />
 
+      <BackToTop />
       {/* Live Admin CMS Controller Modal Overlay */}
       <AdminPanel />
 
