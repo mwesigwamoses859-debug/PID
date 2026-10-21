@@ -171,6 +171,7 @@ export default function Footer({ setActiveSection }: FooterProps) {
 
         </div>
 
+        <p className="mb-8 text-sm"><a href="/community-partnerships" className="underline underline-offset-4 hover:text-white">How to start a community partnership with PID Uganda</a></p>
         {/* BOTTOM FOOTER COPYRIGHT & ACCESS */}
         <div className="flex flex-col sm:flex-row justify-between items-center text-xs text-slate-300 gap-4 font-semibold">
           <p>© {currentYear} {content.footerSettings?.copyrightText}</p>
