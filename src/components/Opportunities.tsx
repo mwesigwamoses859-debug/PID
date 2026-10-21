@@ -1,3 +1,4 @@
+import { RichText } from './RichText';
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -226,9 +227,7 @@ export default function Opportunities() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight">
             <MixedColorText text={content.opportunitiesTitle || "{Apply}, {Partner}, or {Raise Support}"} isDarkBg={true} />
           </h1>
-          <p className="text-slate-100 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
-            {content.opportunitiesSubtitle || "Discover structured pathways to volunteer, apply for mentored internships, support sports sponsorships, or join our professional staff."}
-          </p>
+          <RichText className="text-slate-100 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed" text={content.opportunitiesSubtitle || "Discover structured pathways to volunteer, apply for mentored internships, support sports sponsorships, or join our professional staff."} />
           <div className="w-20 h-1.5 bg-[#7DC242] mx-auto rounded-full" />
         </div>
       </div>
@@ -876,3 +875,4 @@ export default function Opportunities() {
     </section>
   );
 }
+

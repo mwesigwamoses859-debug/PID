@@ -71,6 +71,15 @@ test('a published edit is returned to independent signed-out visitors', async ()
   assert.equal((await read(env)).revision, 1);
   assert.equal((await publicRead({ env })).headers.get('Cache-Control'), 'no-store');
 });
+test('formatted page copy survives publication and restoring an earlier version', async () => {
+  const { env, cookie } = await setup();
+  const formatted = '**Community** through *sport*.\n\n- Learning\n- Teamwork\n\n[Contact PID](#contact)';
+  assert.equal((await post(env, cookie, payload(0, { aboutParagraph1: formatted }))).status, 200);
+  assert.equal((await read(env)).content.aboutParagraph1, formatted);
+  assert.equal((await post(env, cookie, payload(1, { aboutParagraph1: 'Later edit' }))).status, 200);
+  assert.equal((await post(env, cookie, { expectedRevision: 2, restoreRevision: 1, operationId: crypto.randomUUID(), actor: 'Test editor', label: '' })).status, 200);
+  assert.equal((await read(env)).content.aboutParagraph1, formatted);
+});
 test('a stale admin draft cannot overwrite another publish', async () => {
   const { env, cookie } = await setup();
   await post(env, cookie, payload(0, { heroTitle1: 'First editor' }));

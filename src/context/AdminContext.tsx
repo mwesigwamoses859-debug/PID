@@ -7,6 +7,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { DEFAULT_CONTENT } from '../config/defaultContent';
 import { FONT_OPTIONS, BACKGROUNDS, normalizeDesign, fontCss, designLanguage, type DesignSettings } from '../config/design';
 import { publicContent, changedSections, uploadEmbeddedImages } from '../lib/publishing';
+import { detailedChanges, emptyEditHistory, recordEdit, stepHistory, type ContentChange } from '../lib/editorTools';
 
 export interface ServiceItem {
   id: string;
@@ -360,13 +361,25 @@ interface AdminContextProps {
   refreshPublishing: () => Promise<void>;
   loadRevisionDraft: (revision: number) => Promise<void>;
   discardDraft: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  undoEdit: () => void;
+  redoEdit: () => void;
+  contentChanges: ContentChange[];
+  resetContentField: (key: keyof WebContent) => void;
 
 }
 
 const AdminContext = createContext<AdminContextProps | undefined>(undefined);
 
 export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [content, setContent] = useState<WebContent>(DEFAULT_CONTENT);
+  const [content, setContentState] = useState<WebContent>(DEFAULT_CONTENT);
+  const contentRef = useRef<WebContent>(DEFAULT_CONTENT);
+  const setContent = (next: WebContent) => { contentRef.current = next; setContentState(next); };
+  const edits = useRef(emptyEditHistory<WebContent>());
+  const [editAvailability, setEditAvailability] = useState({ undo: false, redo: false });
+  const syncEditAvailability = () => setEditAvailability({ undo: edits.current.past.length > 0, redo: edits.current.future.length > 0 });
+  const clearEdits = () => { edits.current = emptyEditHistory<WebContent>(); syncEditAvailability(); };
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
@@ -383,6 +396,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const publishingRef = useRef(false);
   const directoryRef = useRef<AdministratorUser[]>([]);
   const unpublishedSections = isAuthorized ? changedSections(content, liveContent) : [];
+  const contentChanges = isAuthorized ? detailedChanges(publicContent(liveContent), publicContent(content)) : [];
 
   const applyLive = (data: any) => {
     const next = { ...DEFAULT_CONTENT, ...data.content, administrators: authorizedRef.current ? directoryRef.current : [], designSettings: normalizeDesign(data.content?.designSettings) } as WebContent;
@@ -520,11 +534,29 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const updateContent = (newContent: Partial<WebContent>) => {
     if (!isAuthorized || publishingRef.current) return;
-    setContent(prev => ({ ...prev, ...newContent }));
+    const previous = contentRef.current;
+    const next = { ...previous, ...newContent, administrators: directoryRef.current };
+    const keys = Object.keys(newContent);
+    if (keys.every(key => JSON.stringify(previous[key]) === JSON.stringify(next[key]))) return;
+    edits.current = recordEdit(edits.current, previous, keys.length === 1 ? keys[0] : '');
+    setContent(next); syncEditAvailability();
+  };
+
+  const navigateEdits = (direction: 'undo' | 'redo') => {
+    if (!isAuthorized || publishingRef.current) return;
+    const result = stepHistory(edits.current, contentRef.current, direction);
+    edits.current = result.state;
+    setContent({ ...result.value, administrators: directoryRef.current }); syncEditAvailability();
+  };
+  const undoEdit = () => navigateEdits('undo');
+  const redoEdit = () => navigateEdits('redo');
+  const resetContentField = (key: keyof WebContent) => {
+    edits.current.group = '';
+    updateContent({ [key]: liveRef.current[key] });
   };
 
   const resetToDefault = () => {
-    if (isAuthorized && !isPublishing && window.confirm('Replace your draft with the original website content? The live site stays unchanged until you publish.')) setContent(DEFAULT_CONTENT);
+    if (isAuthorized && !isPublishing && window.confirm('Replace your draft with the original website content? The live site stays unchanged until you publish.')) updateContent(DEFAULT_CONTENT);
   };
 
   const login = async (password: string): Promise<boolean> => {
@@ -562,7 +594,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           setDraftRevision(0);
         } else { setContent(next); setDraftRevision(revision); }
       } catch { setContent(next); setDraftRevision(revision); }
-      setIsAuthorized(true);
+      clearEdits(); setIsAuthorized(true);
       return true;
     } catch { authorizedRef.current = false; return false; }
   };
@@ -572,11 +604,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     authorizedRef.current = false;
     setIsAuthorized(false);
     setContent({ ...liveRef.current, administrators: [] });
+    clearEdits();
     void fetch('/api/admin/session', { method: 'DELETE', credentials: 'same-origin' }).catch(() => {});
   };
 
   const discardDraft = () => {
     if (!isAuthorized || publishingRef.current) return;
+    clearEdits();
     setContent({ ...liveRef.current, administrators: directoryRef.current }); setDraftRevision(liveRevision); setPublishingMessage('Latest live version loaded into your draft.');
     try { localStorage.removeItem('pid_website_content'); localStorage.setItem('pid_draft_v2', JSON.stringify({ content: liveRef.current, baseRevision: liveRevision })); } catch {}
   };
@@ -587,6 +621,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const response = await fetch(`/api/admin/content?revision=${revision}`, { cache: 'no-store', credentials: 'same-origin' });
     const data = await response.json();
     if (!response.ok) { setPublishingMessage(data.error || 'Could not load this version.'); return; }
+    clearEdits();
     setContent({ ...DEFAULT_CONTENT, ...data.content, administrators: directoryRef.current, designSettings: normalizeDesign(data.content?.designSettings) }); setDraftRevision(liveRevision);
     setPublishingMessage(`Version ${revision} loaded for preview. Publish to make it live.`);
     } catch { setPublishingMessage('Could not load that version. Please check your connection.'); }
@@ -609,6 +644,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const latest = await latestResponse.json();
       const published = applyLive(latest);
       setContent(published); setDraftRevision(latest.revision);
+      clearEdits();
       try { localStorage.setItem('pid_draft_v2', JSON.stringify({ content: published, baseRevision: latest.revision })); localStorage.removeItem('pid_website_content'); } catch {}
       operationRef.current = { signature: '', id: '' };
       setPublishingMessage(`Published successfully. Live website version ${data.revision} is available to everyone.`);
@@ -768,7 +804,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           siteFeatures: parsed.siteFeatures || content.siteFeatures,
         };
 
-        setContent(importedContent);
+        updateContent(importedContent);
         return true;
       }
       return false;
@@ -824,7 +860,8 @@ collections:
         importContentJson,
         generateDecapConfigYml,
         liveRevision, draftRevision, publishingReady, isPublishing, publishingMessage, unpublishedSections,
-        history, publishContent, refreshPublishing, loadRevisionDraft, discardDraft
+        history, publishContent, refreshPublishing, loadRevisionDraft, discardDraft,
+        canUndo: editAvailability.undo, canRedo: editAvailability.redo, undoEdit, redoEdit, contentChanges, resetContentField
       }}
     >
       {children}

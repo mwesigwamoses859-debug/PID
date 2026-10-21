@@ -1,3 +1,4 @@
+import { RichText } from './RichText';
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -54,9 +55,7 @@ export default function Partners() {
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tight leading-tight">
             <MixedColorText text={content.partnersTitle || "Institutional Collaboration for {National Reach}"} isDarkBg={true} />
           </h1>
-          <p className="text-slate-200 text-base sm:text-xl max-w-2xl mx-auto leading-relaxed font-normal">
-            {content.partnersSubtitle || "PID operates under formal Memoranda of Understanding with government agencies, ministries, and sports development networks."}
-          </p>
+          <RichText className="text-slate-200 text-base sm:text-xl max-w-2xl mx-auto leading-relaxed font-normal" text={content.partnersSubtitle || "PID operates under formal Memoranda of Understanding with government agencies, ministries, and sports development networks."} />
         </div>
       </div>
 
@@ -143,3 +142,4 @@ export default function Partners() {
     </section>
   );
 }
+

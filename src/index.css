@@ -236,3 +236,16 @@ html[data-button-style="square"] :is(#public-content, #navbar, #public-footer) b
 html[data-sticky-header="false"] #navbar { position: relative; }
 html[data-smooth-scroll="true"] { scroll-behavior: smooth; }
 #pid-admin-console { direction: ltr; font-family: "Inter", system-ui, sans-serif; letter-spacing: normal; }
+
+.pid-rich-text > :first-child { margin-top: 0; }
+.pid-rich-text > :last-child { margin-bottom: 0; }
+.pid-rich-text p { margin-block: .65em; }
+.pid-rich-text ul { list-style: disc; padding-inline-start: 1.5em; margin-block: .7em; }
+.pid-rich-text ol { list-style: decimal; padding-inline-start: 1.5em; margin-block: .7em; }
+.pid-rich-text li + li { margin-top: .3em; }
+.pid-rich-text strong { font-weight: 800; }
+.pid-rich-text em { font-style: italic; }
+.pid-rich-text a { text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+.pid-rich-text blockquote { border-inline-start: 3px solid #7DC242; padding-inline-start: 1em; margin-block: 1em; font-style: italic; }
+.pid-rich-text h2 { font-size: 1.45em; font-weight: 800; margin-block: 1em .5em; }
+.pid-rich-text h3 { font-size: 1.2em; font-weight: 800; margin-block: .8em .4em; }

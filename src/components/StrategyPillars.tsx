@@ -1,3 +1,4 @@
+import { RichText } from './RichText';
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -270,9 +271,7 @@ export default function StrategyPillars() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight">
             <MixedColorText text={content.pillarsTitle || "Four Pillars of {Social Transformation}"} isDarkBg={true} />
           </h1>
-          <p className="text-slate-100 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
-            {content.pillarsSubtitle || "Plan Integral Development operates an integrated program model across Uganda, bridging the gap between immediate grassroots needs and long-term structural policy changes."}
-          </p>
+          <RichText className="text-slate-100 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed" text={content.pillarsSubtitle || "Plan Integral Development operates an integrated program model across Uganda, bridging the gap between immediate grassroots needs and long-term structural policy changes."} />
           <div className="w-20 h-1.5 bg-[#7DC242] mx-auto rounded-full" />
         </div>
       </div>
@@ -570,3 +569,4 @@ export default function StrategyPillars() {
     </section>
   );
 }
+

@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useAdmin, ServiceItem, PackageItem, BlogPostItem, TestimonialItem, AdministratorUser, GalleryImage } from '../context/AdminContext';
 import { Logo } from './Logo';
 import { DesignStudio } from './DesignStudio';
+import { PageEditor } from './PageEditor';
+import { RichTextEditor } from './RichTextEditor';
 import { PublishToolbar, PublishingWorkspace } from './PublishingWorkspace';
 import { uploadImageData } from '../lib/publishing';
 import { 
@@ -232,12 +234,7 @@ const PageBannerEditor: React.FC<PageBannerEditorProps> = ({
     </div>
     <div className="space-y-1.5">
       <label className="text-xs font-semibold text-slate-300">Page Introduction</label>
-      <textarea
-        rows={3}
-        value={subtitle}
-        onChange={(event) => onSubtitleChange(event.target.value)}
-        className="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#007BC4]"
-      />
+      <RichTextEditor label={`${label} introduction`} value={subtitle} onChange={onSubtitleChange} />
     </div>
   </div>
 );
@@ -256,6 +253,7 @@ export const AdminPanel: React.FC = () => {
 
   // Admin Dashboard Active Tab
   type AdminTab = 
+    | 'editor'
     | 'dashboard' 
     | 'builder'
     | 'pages' 
@@ -772,6 +770,7 @@ export const AdminPanel: React.FC = () => {
                       {[
                         { id: 'dashboard', label: 'Dashboard Overview', icon: Globe },
                         { id: 'builder', label: 'Visual Page Builder', icon: Layers },
+                        { id: 'editor', label: 'Page Editor', icon: Type },
                         { id: 'pages', label: 'Website Page Copy', icon: FileText },
                         { id: 'services', label: 'Services & Programs', icon: Briefcase },
                         { id: 'packages', label: 'Travel & Volunteer Packages', icon: HeartHandshake },
@@ -846,6 +845,8 @@ export const AdminPanel: React.FC = () => {
                 <div className="flex-1 min-w-0 p-3 sm:p-5 md:p-8 space-y-6 overflow-y-auto">
                   
                   <PublishToolbar onReview={() => setActiveTab('publishing')} />
+
+                  {activeTab === 'editor' && <PageEditor />}
 
                   {/* TAB 1: DASHBOARD OVERVIEW */}
                   {activeTab === 'dashboard' && (
@@ -1212,12 +1213,7 @@ export const AdminPanel: React.FC = () => {
 
                         <div className="space-y-1.5">
                           <label className="text-xs font-semibold text-slate-300">Hero Subtitle Paragraph</label>
-                          <textarea 
-                            rows={3}
-                            value={content.heroDescription}
-                            onChange={(e) => handleTextChange('heroDescription', e.target.value)}
-                            className="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#007BC4]"
-                          />
+                          <RichTextEditor label="Homepage introduction" value={content.heroDescription} onChange={value => handleTextChange('heroDescription', value)} />
                         </div>
 
                         <ImageFieldWithUpload 
@@ -1270,44 +1266,24 @@ export const AdminPanel: React.FC = () => {
                         <div className="space-y-3">
                           <div className="space-y-1.5">
                             <label className="text-xs font-semibold text-slate-300">About Paragraph 1</label>
-                            <textarea 
-                              rows={3}
-                              value={content.aboutParagraph1}
-                              onChange={(e) => handleTextChange('aboutParagraph1', e.target.value)}
-                              className="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#007BC4]"
-                            />
+                            <RichTextEditor label="About us — first paragraph" value={content.aboutParagraph1} onChange={value => handleTextChange('aboutParagraph1', value)} />
                           </div>
 
                           <div className="space-y-1.5">
                             <label className="text-xs font-semibold text-slate-300">About Paragraph 2</label>
-                            <textarea 
-                              rows={3}
-                              value={content.aboutParagraph2}
-                              onChange={(e) => handleTextChange('aboutParagraph2', e.target.value)}
-                              className="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#007BC4]"
-                            />
+                            <RichTextEditor label="About us — second paragraph" value={content.aboutParagraph2} onChange={value => handleTextChange('aboutParagraph2', value)} />
                           </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-slate-800">
                           <div className="space-y-1.5">
                             <label className="text-xs font-semibold text-slate-300">Mission Statement</label>
-                            <textarea 
-                              rows={2}
-                              value={content.aboutMissionText}
-                              onChange={(e) => handleTextChange('aboutMissionText', e.target.value)}
-                              className="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#007BC4]"
-                            />
+                            <RichTextEditor label="Mission statement" value={content.aboutMissionText} onChange={value => handleTextChange('aboutMissionText', value)} />
                           </div>
 
                           <div className="space-y-1.5">
                             <label className="text-xs font-semibold text-slate-300">Vision Statement</label>
-                            <textarea 
-                              rows={2}
-                              value={content.aboutVisionText}
-                              onChange={(e) => handleTextChange('aboutVisionText', e.target.value)}
-                              className="w-full text-xs bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#007BC4]"
-                            />
+                            <RichTextEditor label="Vision statement" value={content.aboutVisionText} onChange={value => handleTextChange('aboutVisionText', value)} />
                           </div>
                         </div>
                       </div>

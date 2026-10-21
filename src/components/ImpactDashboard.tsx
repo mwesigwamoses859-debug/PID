@@ -1,3 +1,4 @@
+import { RichText } from './RichText';
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -133,9 +134,7 @@ export default function ImpactDashboard() {
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight">
             <MixedColorText text={content.impactTitle || "Our Measurable {Social Ledger}"} isDarkBg={true} />
           </h1>
-          <p className="text-slate-100 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
-            {content.impactSubtitle || "Plan Integral Development (PID) is committed to absolute transparency and data-driven impact, tracking direct indicators of long-term community transformation."}
-          </p>
+          <RichText className="text-slate-100 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed" text={content.impactSubtitle || "Plan Integral Development (PID) is committed to absolute transparency and data-driven impact, tracking direct indicators of long-term community transformation."} />
           <div className="w-20 h-1.5 bg-[#7DC242] mx-auto rounded-full" />
         </div>
       </div>
@@ -264,3 +263,4 @@ export default function ImpactDashboard() {
     </section>
   );
 }
+

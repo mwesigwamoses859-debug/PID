@@ -1,3 +1,4 @@
+import { RichText } from './RichText';
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -106,12 +107,8 @@ export default function AboutUs() {
             <h3 className="text-2xl sm:text-3xl font-bold text-[#003366] leading-snug">
               A Decade of Sport-Driven Empowerment
             </h3>
-            <p className="text-slate-700 text-lg sm:text-xl leading-relaxed">
-              <MixedColorText text={content.aboutParagraph1} isDarkBg={false} />
-            </p>
-            <p className="text-slate-700 text-lg sm:text-xl leading-relaxed">
-              <MixedColorText text={content.aboutParagraph2} isDarkBg={false} />
-            </p>
+            <RichText className="text-slate-700 text-lg sm:text-xl leading-relaxed" text={content.aboutParagraph1} highlight />
+            <RichText className="text-slate-700 text-lg sm:text-xl leading-relaxed" text={content.aboutParagraph2} highlight />
             <p className="border-l-4 border-[#7DC242] pl-5 italic text-slate-700 font-medium text-lg sm:text-xl bg-slate-50 py-3 rounded-r-xl">
               We operate with absolute independence, free from political or religious affiliation, ensuring services are delivered transparently to those who need them most.
             </p>
@@ -158,12 +155,8 @@ export default function AboutUs() {
                     <div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center text-[#003366]">
                       <Compass className="w-5 h-5 text-[#007BC4]" />
                     </div>
-                    <p className="text-[#003366] font-bold font-serif text-lg leading-snug italic">
-                      <MixedColorText text={content.aboutMissionText} isDarkBg={false} />
-                    </p>
-                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                      {content.aboutMissionDesc}
-                    </p>
+                    <RichText className="text-[#003366] font-bold font-serif text-lg leading-snug italic" text={content.aboutMissionText} highlight />
+                    <RichText className="text-xs text-slate-700 leading-relaxed font-medium" text={content.aboutMissionDesc} />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -175,12 +168,8 @@ export default function AboutUs() {
                     <div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center text-[#003366]">
                       <Eye className="w-5 h-5 text-[#007BC4]" />
                     </div>
-                    <p className="text-[#003366] font-bold font-serif text-lg leading-snug italic">
-                      <MixedColorText text={content.aboutVisionText} isDarkBg={false} />
-                    </p>
-                    <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                      {content.aboutVisionDesc}
-                    </p>
+                    <RichText className="text-[#003366] font-bold font-serif text-lg leading-snug italic" text={content.aboutVisionText} highlight />
+                    <RichText className="text-xs text-slate-700 leading-relaxed font-medium" text={content.aboutVisionDesc} />
                   </motion.div>
                 )}
               </div>
@@ -271,3 +260,4 @@ export default function AboutUs() {
     </section>
   );
 }
+

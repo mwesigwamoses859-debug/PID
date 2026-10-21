@@ -1,3 +1,4 @@
+import { RichText } from './RichText';
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -86,9 +87,7 @@ export default function Hero({ setActiveSection }: HeroProps) {
                   <MixedColorText text={content.heroTitle2} isDarkBg={true} />
                 </span>
               </h1>
-              <p className="text-base sm:text-xl md:text-2xl text-slate-100 max-w-2xl leading-relaxed font-sans font-medium">
-                {content.heroDescription}
-              </p>
+              <RichText className="text-base sm:text-xl md:text-2xl text-slate-100 max-w-2xl leading-relaxed font-sans font-medium" text={content.heroDescription} />
             </motion.div>
 
             {/* Key Quick Bullet points */}
@@ -207,3 +206,4 @@ export default function Hero({ setActiveSection }: HeroProps) {
     </section>
   );
 }
+
