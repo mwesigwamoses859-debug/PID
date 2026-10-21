@@ -457,7 +457,7 @@ interface AdminContextProps {
   isAdminOpen: boolean;
   setIsAdminOpen: (open: boolean) => void;
   isAuthorized: boolean;
-  login: (password: string) => boolean;
+  login: (password: string) => Promise<boolean>;
   logout: () => void;
   exportContentJson: () => void;
   importContentJson: (jsonString: string) => boolean;
@@ -501,10 +501,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
       }
       
-      const authSaved = sessionStorage.getItem('pid_admin_authorized');
-      if (authSaved === 'true') {
-        setIsAuthorized(true);
-      }
+      sessionStorage.removeItem('pid_admin_authorized');
     } catch (e) {
       console.error('Failed to load local storage state:', e);
     }
@@ -575,19 +572,44 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const login = (password: string) => {
-    if (password === '1234' || password === '2010' || password.toLowerCase() === 'admin') {
-      setIsAuthorized(true);
-      sessionStorage.setItem('pid_admin_authorized', 'true');
-      return true;
+  const login = async (password: string): Promise<boolean> => {
+    setIsAuthorized(false);
+    try {
+      const response = await fetch('/api/admin/session', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+        cache: 'no-store',
+      });
+      if (!response.ok) return false;
+      const result = await response.json();
+      const authorized = result.authenticated === true;
+      setIsAuthorized(authorized);
+      return authorized;
+    } catch {
+      return false;
     }
-    return false;
   };
 
   const logout = () => {
     setIsAuthorized(false);
     sessionStorage.removeItem('pid_admin_authorized');
+    void fetch('/api/admin/session', { method: 'DELETE', credentials: 'same-origin' }).catch(() => {});
   };
+
+  // Recheck the server session while the editor is open; never trust browser storage.
+  useEffect(() => {
+    if (!isAuthorized) return;
+    const checkSession = async () => {
+      try {
+        const response = await fetch('/api/admin/session', { cache: 'no-store', credentials: 'same-origin' });
+        if (!response.ok || (await response.json()).authenticated !== true) setIsAuthorized(false);
+      } catch { setIsAuthorized(false); }
+    };
+    const timer = window.setInterval(checkSession, 60000);
+    return () => window.clearInterval(timer);
+  }, [isAuthorized]);
 
   // Export current content as siteContent.json
   const exportContentJson = () => {
@@ -794,3 +816,4 @@ export const useAdmin = () => {
   }
   return context;
 };
+

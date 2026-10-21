@@ -245,9 +245,8 @@ export const AdminPanel: React.FC = () => {
   } = useAdmin();
 
   // Auth states
-  const [username, setUsername] = useState('admin');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(true);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState(false);
 
   // Admin Dashboard Active Tab
@@ -291,26 +290,18 @@ export const AdminPanel: React.FC = () => {
     setTimeout(() => setSaveStatus(null), 3500);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(password);
-    if (success) {
-      setLoginError(false);
+    if (isLoggingIn) return;
+    setIsLoggingIn(true);
+    setLoginError(false);
+    try {
+      const success = await login(password);
+      setLoginError(!success);
+      if (success) triggerSaveStatus('Signed in to PID Admin Console.');
+    } finally {
       setPassword('');
-      triggerSaveStatus('Logged into Decap / WordPress Admin Console!');
-    } else {
-      setLoginError(true);
-      triggerSaveStatus('Login failed. Incorrect passcode (Use 1234).');
-    }
-  };
-
-  const handleQuickDemoLogin = () => {
-    setPassword('1234');
-    const success = login('1234');
-    if (success) {
-      setLoginError(false);
-      setPassword('');
-      triggerSaveStatus('Logged into Decap / WordPress Admin Console!');
+      setIsLoggingIn(false);
     }
   };
 
@@ -408,7 +399,7 @@ export const AdminPanel: React.FC = () => {
     setIsSimulatingDeploy(true);
     setTimeout(() => {
       setIsSimulatingDeploy(false);
-      triggerSaveStatus('Committed siteContent.json changes to Git repository! Static site redeploy initiated.');
+      triggerSaveStatus('This editor saves local drafts. Export JSON and update the repository to publish.');
     }, 1800);
   };
 
@@ -628,7 +619,7 @@ export const AdminPanel: React.FC = () => {
                 </span>
                 <span className="hidden md:flex px-2 py-0.5 rounded text-[9px] font-mono uppercase bg-[#7DC242]/20 text-[#7DC242] font-bold border border-[#7DC242]/40 items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#7DC242] animate-pulse" />
-                  Live Git Repository Mode
+                  Local Draft Editor
                 </span>
               </div>
               <p className="text-[10px] text-sky-200/80 flex items-center gap-1">
@@ -644,12 +635,12 @@ export const AdminPanel: React.FC = () => {
               <>
                 <button
                   type="button"
-                  onClick={() => triggerSaveStatus("✓ All changes saved and published live to website!")}
+                  onClick={() => triggerSaveStatus("Changes saved as a draft in this browser. Export JSON to publish through the repository.")}
                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#7DC242] hover:bg-[#6eb335] text-slate-950 font-black rounded-lg text-xs transition-all cursor-pointer shadow-md border border-emerald-300/40"
-                  title="Save & Publish Edits Immediately"
+                  title="Save & Save Local Draft Immediately"
                 >
                   <CheckCircle2 className="w-3.5 h-3.5 text-slate-950" />
-                  <span className="hidden sm:inline">Publish Edits</span>
+                  <span className="hidden sm:inline">Save Local Draft</span>
                 </button>
 
                 <button
@@ -729,36 +720,17 @@ export const AdminPanel: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Passcode Reminder Box */}
-                  <div className="p-3 bg-[#132337] border border-[#00c7b7]/30 rounded-xl flex items-start gap-2.5 text-xs text-slate-200">
-                    <Key className="w-4 h-4 text-[#00c7b7] shrink-0 mt-0.5" />
-                    <div>
-                      <span className="font-bold text-white block">Default Access Passcode</span>
-                      <p className="text-[11px] text-slate-300">Enter passcode <code className="bg-[#1f2f45] px-1.5 py-0.5 rounded font-mono font-bold text-[#00c7b7]">1234</code> to log in or click quick fill.</p>
-                    </div>
-                  </div>
-
-                  {/* Form */}
-                  <form onSubmit={handleLogin} className="space-y-4">
+                  <p className="text-xs text-slate-400">Authorized administrator access only.</p>
+                  <form onSubmit={handleLogin} autoComplete="off" className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                        <User className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Username or Email</span>
-                      </label>
-                      <input 
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="w-full text-xs bg-[#0f172a] border border-[#334155] rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-[#00c7b7] font-medium"
-                      />
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                      <label htmlFor="pid-admin-password" className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
                         <Lock className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Access Passcode PIN</span>
+                        <span>Administrator Password</span>
                       </label>
                       <input 
+                        id="pid-admin-password"
+                        name="pid-admin-password"
+                        autoComplete="off"
                         type="password"
                         required
                         placeholder="••••••••"
@@ -768,39 +740,20 @@ export const AdminPanel: React.FC = () => {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between text-xs pt-1">
-                      <label className="flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-200">
-                        <input 
-                          type="checkbox" 
-                          checked={rememberMe} 
-                          onChange={(e) => setRememberMe(e.target.checked)}
-                          className="rounded bg-slate-800 border-slate-700 text-[#00c7b7]"
-                        />
-                        <span>Remember session</span>
-                      </label>
-
-                      <button
-                        type="button"
-                        onClick={handleQuickDemoLogin}
-                        className="text-[11px] text-[#00c7b7] hover:underline font-bold cursor-pointer"
-                      >
-                        Auto-Fill (1234) & Login
-                      </button>
-                    </div>
-
                     {loginError && (
                       <div className="flex items-center gap-2 p-3 bg-red-950/60 text-red-200 text-xs font-medium rounded-xl border border-red-800/80">
                         <ShieldAlert className="w-4 h-4 shrink-0 text-red-400" />
-                        <span>Incorrect passcode. Use default PIN <strong>1234</strong>.</span>
+                        <span>Unable to sign in. Check your password or contact the site owner.</span>
                       </div>
                     )}
 
                     <button
                       type="submit"
+                      disabled={isLoggingIn}
                       className="w-full py-3 bg-[#00c7b7] hover:bg-[#00b2a3] text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-lg shadow-teal-500/20 flex items-center justify-center gap-2"
                     >
                       <Key className="w-4 h-4" />
-                      <span>Log In to Decap CMS Console</span>
+                      <span>{isLoggingIn ? 'Signing in...' : 'Log In to Admin Console'}</span>
                     </button>
                   </form>
 
@@ -922,7 +875,7 @@ export const AdminPanel: React.FC = () => {
                           </span>
                         </div>
                         <p className="text-xs text-sky-200/80 mt-0.5">
-                          Persist all text, uploaded images, and configuration changes live to website memory.
+                          Draft changes are stored in this browser. Export JSON and update the repository to publish for all visitors.
                         </p>
                       </div>
                     </div>
@@ -930,11 +883,11 @@ export const AdminPanel: React.FC = () => {
                     <div className="grid grid-cols-1 sm:flex sm:flex-wrap items-center gap-2.5 w-full sm:w-auto sm:justify-end">
                       <button
                         type="button"
-                        onClick={() => triggerSaveStatus("✓ All console changes saved & published live to website!")}
+                        onClick={() => triggerSaveStatus("Changes saved as a draft in this browser. Export JSON to publish through the repository.")}
                         className="px-5 py-2.5 bg-[#003366] hover:bg-[#00264d] text-white font-black text-xs rounded-xl transition-all cursor-pointer shadow-lg border border-[#007BC4]/50 flex items-center gap-2"
                       >
                         <CheckCircle2 className="w-4 h-4 text-[#7DC242]" />
-                        <span>Save & Publish Edits</span>
+                        <span>Save & Save Local Draft</span>
                       </button>
 
                       <button
@@ -978,7 +931,7 @@ export const AdminPanel: React.FC = () => {
                             className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 shadow-md"
                           >
                             <GitBranch className="w-4 h-4" />
-                            <span>{isSimulatingDeploy ? 'Deploying...' : 'Commit & Redeploy'}</span>
+                            <span>{isSimulatingDeploy ? 'Deploying...' : 'Publishing Instructions'}</span>
                           </button>
                         </div>
                       </div>
@@ -2575,7 +2528,7 @@ export const AdminPanel: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <span>Access Passcode: <strong>1234</strong></span>
+            <span>Private administrator access</span>
             <button 
               onClick={() => setIsAdminOpen(false)}
               className="text-[#007BC4] hover:underline font-bold"
@@ -2589,3 +2542,4 @@ export const AdminPanel: React.FC = () => {
     </div>
   );
 };
+
