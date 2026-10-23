@@ -1,0 +1,30 @@
+name: WordPress theme package and syntax check
+on:
+  push:
+    branches: [wordpress-migration]
+    paths:
+      - 'wordpress-theme/**'
+      - '.github/workflows/wordpress-theme-check.yml'
+  workflow_dispatch:
+jobs:
+  package-theme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Check PHP syntax
+        run: |
+          find wordpress-theme/pid-uganda -name '*.php' -print0 | xargs -0 -n1 php -l
+      - name: Build uploadable theme ZIP
+        run: |
+          cd wordpress-theme
+          zip -r ../pid-uganda-wordpress-theme.zip pid-uganda
+      - name: Upload WordPress theme ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: pid-uganda-wordpress-theme
+          path: pid-uganda-wordpress-theme.zip
+          if-no-files-found: error
